@@ -3550,7 +3550,12 @@ img { max-width: 100%; height: auto; }
 }
 
 /* The "footer" element is reused by RosarioSIS as the fixed action bar.
-   We render it as a modern top app bar. */
+   We render it as a modern top app bar.
+   Note: the element also carries the legacy `.mod` class whose
+   `overflow: hidden` would clip every dropdown panel that opens below
+   the bar (the open panels were reduced to a sliver overlapping the
+   neighbouring buttons, and their items were unreachable by pointer).
+   The bar must stay overflow-visible. */
 #footer {
 	position: fixed;
 	top: 0; left: 0; right: 0;
@@ -3559,6 +3564,7 @@ img { max-width: 100%; height: auto; }
 	background: var(--surface);
 	border-bottom: 1px solid var(--border);
 	box-shadow: var(--shadow-sm);
+	overflow: visible !important;
 }
 
 #footerwrap {
@@ -3664,7 +3670,9 @@ img { max-width: 100%; height: auto; }
 	#body { transition: margin-left .22s ease; }
 }
 
-/* Top bar: logo first, then context selects (school / year / quarter). */
+/* Top bar: logo first, then the hamburger (collapses the sidebar), the
+   context dropdown buttons (School / Year / Quarter), and the action
+   buttons (Print, Logout) pushed to the right edge. */
 .topbar-logo {
 	display: inline-flex;
 	align-items: center;
@@ -3786,13 +3794,23 @@ img { max-width: 100%; height: auto; }
 #menu-top form .username,
 #menu-top form .today-date { display: none !important; }
 
-/* Identity card: avatar initial + name + role + date. */
+/* Identity card: avatar initial + name + role + date. It doubles as the
+   home button (legacy behaviour): the whole card links to the portal. */
 #menu-user {
 	display: flex;
 	align-items: center;
 	gap: var(--sp-3);
-	padding: var(--sp-2) var(--sp-2) var(--sp-3);
+	padding: var(--sp-2);
+	color: var(--text);
+	border: 1px solid var(--border);
+	border-radius: var(--radius-md);
+	background: var(--surface);
+	box-shadow: var(--shadow-sm);
+	text-decoration: none;
+	cursor: pointer;
+	transition: border-color .15s, box-shadow .15s;
 }
+#menu-user:hover { border-color: var(--brand); box-shadow: var(--shadow-md); }
 .user-avatar {
 	display: inline-flex;
 	align-items: center;
@@ -3829,7 +3847,6 @@ img { max-width: 100%; height: auto; }
 	font-size: var(--fs-1);
 	margin-top: 1px;
 }
-#menu-top select { width: 100%; margin-bottom: var(--sp-2); }
 
 /* ------------------------------------------------------------------
  * Sidebar colour repairs.
@@ -3840,10 +3857,15 @@ img { max-width: 100%; height: auto; }
  * hard-coded legacy values must be overridden here:
  * ------------------------------------------------------------------ */
 #menu { color: var(--text); }
-#menu-top select { background: var(--surface); color: var(--text); border-color: var(--border-strong); }
+#menu-top select {
+	width: 100%;
+	margin-bottom: var(--sp-2);
+	background: var(--surface);
+	color: var(--text);
+	border-color: var(--border-strong);
+}
 #menu-top select:focus { border-color: var(--brand); box-shadow: var(--focus); }
 
-/* Submenu section headers ("Setup", "Reports", ...) were near-white (#eee). */
 /* The app injects a spacer <div> after #menu when the menu is fixed;
    legacy CSS paints it #121212. It must stay invisible behind the menu. */
 #menu.fixedmenu-fixed + div { background: transparent !important; }
@@ -4404,15 +4426,15 @@ details.about-rosariosis summary { cursor: pointer; padding: var(--sp-2); }
 	#body { margin-left: 0; padding: var(--sp-3); }
 	.header1 h2 { font-size: var(--fs-5); }
 
-	/* The top bar is too narrow for the cloned selects — the drawer shows
-	   the original school/year/quarter selects instead. */
+	/* The top bar is too narrow for the context dropdown buttons — the
+	   drawer shows the original school/year/quarter selects instead. */
 	#topbar-context { display: none !important; }
 	.topbar-logo img.logo { height: 26px; }
 	/* Right-align the remaining top bar buttons (print, logout). */
 	#footerwrap { justify-content: flex-end; }
 	#footerwrap > .topbar-logo,
 	#footerwrap > #BottomButtonMenu { margin-right: auto; }
-	/* Icon-only top bar buttons when the context selects are hidden. */
+	/* Icon-only top bar buttons when the context dropdowns are hidden. */
 	.BottomButton { padding: 0 var(--sp-2); }
 	.BottomButton > span { display: none; }
 	/* The sidebar Help button keeps its label (it has room). */

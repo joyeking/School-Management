@@ -383,7 +383,7 @@
 		if (window.innerWidth > MOBILE_BP) { return; }
 
 		// Close the drawer after navigating with a menu link.
-		if (drawerOpen() && (target.closest('.adminmenu a') || target.closest('#menu-user a'))) {
+		if (drawerOpen() && (target.closest('.adminmenu a') || target.closest('#menu-user'))) {
 			setDrawer(false);
 		}
 	}, true);

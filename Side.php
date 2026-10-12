@@ -391,14 +391,14 @@ if ( ! isset( $_REQUEST['sidefunc'] )
 
 	<?php // User Information. ?>
 
-	<?php // EthioSIS: identity card opens the sidebar ("admin — Administrator").
+	<?php // EthioSIS: identity card links home (like the legacy card).
 		$profile_label = ucfirst( (string) User( 'PROFILE' ) );
 
 		if ( $profile_label === 'Admin' )
 		{
 			$profile_label = _( 'Administrator' );
 		} ?>
-	<div id="menu-user" class="menu-user-card">
+	<a id="menu-user" class="menu-user-card" href="<?php echo URLEscape( 'Modules.php?modname=misc/Portal.php' ); ?>" title="<?php echo AttrEscape( _( 'Home' ) ); ?>">
 		<span class="user-avatar" aria-hidden="true"><?php
 			echo mb_strtoupper( mb_substr( (string) User( 'NAME' ), 0, 1 ) );
 		?></span>
@@ -409,7 +409,7 @@ if ( ! isset( $_REQUEST['sidefunc'] )
 				echo strftime_compat( '%A ' . Preferences( 'DATE' ) );
 			?></span>
 		</span>
-	</div>
+	</a>
 
 	<a href="Modules.php?modname=misc/Portal.php" class="center">
 		<img src="assets/themes/<?php echo Preferences( 'THEME' ); ?>/logo.png" class="logo" alt="Logo">
