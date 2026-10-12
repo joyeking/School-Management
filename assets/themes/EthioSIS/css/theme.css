@@ -212,6 +212,24 @@ img { max-width: 100%; height: auto; }
 #menu-top .today-date { display: block; color: var(--text-muted); margin-bottom: var(--sp-2); }
 #menu-top select { width: 100%; margin-bottom: var(--sp-2); }
 
+/* ------------------------------------------------------------------
+ * Sidebar colour repairs.
+ *
+ * The legacy colours.css forces a dark menu background (#121212), a
+ * white inherited text colour and dark selects (#menu-top select gets
+ * background:#1a1a1a). We keep a light sidebar, so every one of those
+ * hard-coded legacy values must be overridden here:
+ * ------------------------------------------------------------------ */
+#menu { color: var(--text); }
+#menu-top select { background: var(--surface); color: var(--text); border-color: var(--border-strong); }
+#menu-top select:focus { border-color: var(--brand); box-shadow: var(--focus); }
+
+/* Submenu section headers ("Setup", "Reports", ...) were near-white (#eee). */
+/* The app injects a spacer <div> after #menu when the menu is fixed;
+   legacy CSS paints it #121212. It must stay invisible behind the menu. */
+#menu.fixedmenu-fixed + div { background: transparent !important; }
+#menu::-webkit-scrollbar-track { background: transparent; }
+
 /* Main content */
 #body {
 	margin-left: var(--sidebar-w);
@@ -332,7 +350,7 @@ a#selectedMenuLink { background: var(--brand-100); color: var(--brand-700); font
 	padding: 0 var(--sp-2);
 	font-size: var(--fs-1);
 	font-weight: 700;
-	color: var(--text-faint);
+	color: var(--text-muted);
 	border: 0;
 	list-style: none;
 }
