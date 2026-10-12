@@ -207,13 +207,15 @@ VALUES (200000012, 'select', 'Stream', 12, 'Natural Science\nSocial Science', 1)
 ALTER TABLE students ADD COLUMN IF NOT EXISTS custom_200000012 text;
 
 -- ----------------------------------------------------------------------------
--- 9. Optional: simplify the side menu (keep only the core school modules).
---    Uncomment the line below to hide Eligibility, Discipline, Accounting,
---    Student Billing, Food Service, Resources and Custom by default.
+-- 9. Simplify the side menu (keep only the core school modules).
+--    Eligibility, Discipline, Accounting, Student Billing, Food Service,
+--    Resources and Custom are switched off so the menu is not overwhelming.
+--    Important: every module key is kept, with a false value, so PHP 8 never
+--    hits an "undefined array key" warning.
 --    Re-enable any module later from School Setup > Configuration > Modules.
 -- ----------------------------------------------------------------------------
--- UPDATE config SET config_value = 'a:6:{s:12:"School_Setup";b:1;s:8:"Students";b:1;s:5:"Users";b:1;s:10:"Scheduling";b:1;s:6:"Grades";b:1;s:10:"Attendance";b:1;}'
---   WHERE title = 'MODULES';
+UPDATE config SET config_value = 'a:13:{s:12:"School_Setup";b:1;s:8:"Students";b:1;s:5:"Users";b:1;s:10:"Scheduling";b:1;s:6:"Grades";b:1;s:10:"Attendance";b:1;s:11:"Eligibility";b:0;s:10:"Discipline";b:0;s:10:"Accounting";b:0;s:15:"Student_Billing";b:0;s:12:"Food_Service";b:0;s:9:"Resources";b:0;s:6:"Custom";b:0;}'
+WHERE title = 'MODULES';
 
 -- ============================================================================
 --  Done. The 2026/2027 marking periods are ready; run School Setup > Rollover
