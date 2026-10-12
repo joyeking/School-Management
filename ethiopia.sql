@@ -58,6 +58,13 @@ UPDATE config SET config_value = 'EthioSIS' WHERE title = 'THEME';
 UPDATE config SET config_value = '.'    WHERE title = 'DECIMAL_SEPARATOR';
 UPDATE config SET config_value = ','    WHERE title = 'THOUSANDS_SEPARATOR';
 
+-- Skip the "Confirm Successful Installation" first-login wizard + optional
+-- rosariosis.org poll. That wizard also rewrites the admin password, which is
+-- the usual cause of an "Incorrect username or password" right after setup.
+-- To get the wizard back, set LOGIN = 'No' (School Setup > Configuration).
+UPDATE config SET config_value = 'Yes' WHERE title = 'LOGIN';
+UPDATE config SET config_value = NULL  WHERE title = 'FORCE_PASSWORD_CHANGE_ON_FIRST_LOGIN';
+
 -- ----------------------------------------------------------------------------
 -- 3. Grade levels: Kindergarten + Grades 1..12
 -- ----------------------------------------------------------------------------

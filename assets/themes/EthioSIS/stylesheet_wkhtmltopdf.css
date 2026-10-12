@@ -1,4 +1,4 @@
-﻿/* EthioSIS - generated concatenation. Edit files in css/ then re-run grunt. */
+/* EthioSIS - generated concatenation. Edit files in css/ then re-run grunt. */
 /* ===== css\legacy\colors.css ===== */
 html {
 	background: #fff;
@@ -674,7 +674,6 @@ hr {
 		border-right-color: #dfdfdf
 	}
 }
-
 /* ===== css\legacy\font.css ===== */
 /* Lato */
 
@@ -698,7 +697,6 @@ hr {
 	font-weight: bold;
 	font-style: normal;
 }
-
 /* ===== css\legacy\icons.css ===== */
 /**
  * CSS rules for icons (modules)
@@ -798,7 +796,6 @@ hr {
 .module-icon.Users {
 	background-image: url("modules/Users.png");
 }
-
 /* ===== css\legacy\stylesheet.css ===== */
 #wrap {
 	height: auto;
@@ -3073,7 +3070,6 @@ template {
 .sizep2 {
 	font-size: 17px
 }
-
 /* ===== css\legacy\rtl.css ===== */
 /**
  * CSS rules for Right To Left languages (Arabic...)
@@ -3305,7 +3301,6 @@ html[dir="RTL"] .select2-container--default .select2-selection__rendered {
 		margin: 0 0 0 16px;
 	}
 }
-
 /* ===== css\legacy\wkhtmltopdf.css ===== */
 /* wkhtmltopdf specific */
 
@@ -3398,10 +3393,9 @@ blockquote,
 q {
 	quotes: initial
 }
-
 /* ===== css\theme.css ===== */
 /* =====================================================================
-   EthioSIS theme â€” modern UI layer
+   EthioSIS theme — modern UI layer
    ---------------------------------------------------------------------
    Loaded AFTER the legacy FlatSIS rules (see ../stylesheet.css), so it
    overrides them. Design tokens live here; layout, navigation, tables,
@@ -3413,7 +3407,7 @@ q {
 /* 1. Design tokens                                                    */
 /* ------------------------------------------------------------------ */
 :root {
-	/* Brand â€” an emerald green, with a restrained gold accent. */
+	/* Brand — an emerald green, with a restrained gold accent. */
 	--brand: #0e7c5a;
 	--brand-600: #0b6a4d;
 	--brand-700: #095740;
@@ -3478,38 +3472,16 @@ q {
 	--focus: 0 0 0 3px rgba(14, 124, 90, .35);
 }
 
-/* Dark mode â€” same tokens, different values. */
-@media (prefers-color-scheme: dark) {
-	:root {
-		--bg: #0e1418;
-		--surface: #161f26;
-		--surface-2: #1b252d;
-		--surface-3: #212d36;
-		--border: #26333d;
-		--border-strong: #33424e;
-
-		--text: #e7eef4;
-		--text-soft: #c3d0da;
-		--text-muted: #93a3b1;
-		--text-faint: #6b7c8b;
-		--text-invert: #0e1418;
-
-		--brand: #2aa37c;
-		--brand-600: #35b489;
-		--brand-700: #46c79b;
-		--brand-100: #123a2e;
-		--brand-50: #10241d;
-
-		--danger-bg: #3a1c19;
-		--warning-bg: #3a2c12;
-		--success-bg: #10322a;
-		--info-bg: #122c3d;
-
-		--shadow-sm: 0 1px 2px rgba(0, 0, 0, .4);
-		--shadow-md: 0 4px 14px rgba(0, 0, 0, .45);
-		--shadow-lg: 0 14px 34px rgba(0, 0, 0, .55);
-	}
-}
+/* ------------------------------------------------------------------
+ * Dark mode is intentionally NOT enabled.
+ *
+ * The legacy RosarioSIS stylesheet hard-codes dozens of colours instead of
+ * using variables, so a variable-only dark palette left text unreadable:
+ * page titles rendered light-on-light (~1.1:1) and field labels
+ * dark-on-dark (~1.3:1). Until a fully audited dark palette exists
+ * (overriding every legacy colour, not just the tokens below), the app
+ * ships a single, consistent light theme.
+ * ------------------------------------------------------------------ */
 
 /* ------------------------------------------------------------------ */
 /* 2. Base / reset                                                     */
@@ -3529,7 +3501,7 @@ body {
 	text-rendering: optimizeLegibility;
 }
 
-/* Kill the pervasive legacy uppercase â€” it hurts readability. */
+/* Kill the pervasive legacy uppercase — it hurts readability. */
 h1, h2, h3, h4, h5, h6, th, label, .button, .BottomButton,
 .menu-top, .h3multi, .list-header, .menu-inter {
 	text-transform: none;
@@ -3717,7 +3689,7 @@ a#selectedModuleLink .module-icon { filter: brightness(0) invert(1); opacity: 1;
 /* Remove the legacy stray chevrons on module rows. */
 a.menu-top::after, .menu-module .menu-top::after { content: none !important; }
 
-/* Submenu panel (used as an inline accordion and as a hover flyout). */
+/* Submenu panel (rendered inline as an accordion). */
 .wp-submenu {
 	list-style: none;
 	list-style-image: none;
@@ -3743,6 +3715,7 @@ a#selectedMenuLink { background: var(--brand-100); color: var(--brand-700); font
 
 /* Click / tap accordion (legacy JS sets #selectedModuleLink). */
 #selectedModuleLink + .wp-submenu {
+	display: block;
 	box-shadow: none;
 	border: 0 !important;
 	padding: 2px 0 2px var(--sp-3);
@@ -3760,18 +3733,30 @@ a#selectedMenuLink { background: var(--brand-100); color: var(--brand-700); font
 	list-style: none;
 }
 
-/* Desktop hover flyout â€” align with the new sidebar width. */
-@media (min-width: 875px) {
-	.no-touch .menu-module:hover .wp-submenu,
-	.no-touch .menu-module:focus-within .wp-submenu {
-		left: var(--sidebar-w) !important;
-		width: var(--sidebar-w) !important;
-		top: 0 !important;
-	}
+/* Submenus are an inline accordion only.
+   The sidebar itself scrolls (overflow: auto), which would clip a
+   position:absolute hover flyout and make the menu look broken. So the
+   legacy flyout is disabled and the app's own JS (which marks the active
+   module with #selectedModuleLink) shows that module's items inline. */
+.menu-module .wp-submenu { display: none; }
+
+.no-touch .menu-module:hover .wp-submenu,
+.no-touch .menu-module:focus-within .wp-submenu {
+	display: none;
+	position: relative;
+	top: auto;
+	left: 0;
+	width: auto;
+	max-height: none;
+	box-shadow: none;
+	border: 0 !important;
 }
 
+/* Keep the active module's submenu open even while hovered. */
+#selectedModuleLink + .wp-submenu { display: block; }
+
 /* ------------------------------------------------------------------ */
-/* 6. Module icons â€” crisp SVG glyphs (see icons-svg.css)              */
+/* 6. Module icons — crisp SVG glyphs (see icons-svg.css)              */
 /* ------------------------------------------------------------------ */
 .module-icon {
 	display: inline-block;
@@ -3785,7 +3770,7 @@ a#selectedMenuLink { background: var(--brand-100); color: var(--brand-700); font
 a.menu-top:hover .module-icon { opacity: 1; }
 
 /* ------------------------------------------------------------------ */
-/* 7. Page header (DrawHeader) â€” clean, no stacked tables             */
+/* 7. Page header (DrawHeader) — clean, no stacked tables             */
 /* ------------------------------------------------------------------ */
 table.header, table.header td { border: 0; background: transparent; }
 table.header { width: 100%; margin: 0 0 var(--sp-4); border-collapse: collapse; }
@@ -4073,5 +4058,3 @@ details.about-rosariosis summary { cursor: pointer; padding: var(--sp-2); }
 	#body { margin-left: 0; padding: 0; }
 	.postbox, table.list { box-shadow: none; border-color: #ccc; }
 }
-
-
