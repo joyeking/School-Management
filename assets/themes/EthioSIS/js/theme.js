@@ -3,12 +3,15 @@
  *
  * Loaded (deferred) on every page when assets/themes/<THEME>/js/theme.js exists.
  * Jobs:
- *  1. Relocate the context selects (school, year, quarter, course period)
- *     from the sidebar into the top bar (#topbar-context). The originals
- *     stay inside their <form> (hidden on desktop) so the app's
- *     `onchange-ajax-post-form` flow keeps working; we mirror any change
- *     back to the hidden original and re-clone whenever the menu re-renders.
- *  2. Add a collapse/expand button to every sidebar module.
+ *  1. Relocate the context dropdowns (school, year, quarter, course period)
+ *     to the top bar: a button per field ("School", "Year", "Quarter")
+ *     that opens a dropdown listing the values (AASS, 2025-2026, …).
+ *     The original selects stay inside their <form> (hidden on desktop)
+ *     so the app's `onchange-ajax-post-form` flow keeps working; choosing
+ *     a value mirrors it to the hidden original and we re-hydrate
+ *     whenever the menu re-renders.
+ *  2. Add a collapse/expand button to every sidebar module. Submenus are
+ *     closed by default; the selected module's menu drops down.
  *  3. Re-hydrate both after the sidebar is replaced by AJAX (sidefunc=update).
  */
 (function () {
@@ -48,8 +51,12 @@
 		return host;
 	}
 
-	// Copy `<select>` markup into the top bar; originals stay hidden in the
-	// sidebar form (desktop) or visible inside the drawer (narrow screens).
+	// Build one control per context field in the top bar: a BUTTON named
+	// after the field ("School", "Year", "Quarter") whose dropdown lists
+	// the values (AASS, 2025-2026, Quarter 1…). The originals stay hidden
+	// in the sidebar form (desktop) or visible inside the drawer (narrow
+	// screens); choosing a value mirrors it to the original so the app's
+	// `onchange-ajax-post-form` flow keeps working.
 	function hydrateContext() {
 		var host = contextHost();
 
@@ -66,40 +73,77 @@
 			field.className = 'topbar-field';
 			field.dataset.for = orig.id;
 
-			var label = document.createElement('label');
-			label.textContent = f.label;
-			label.setAttribute('for', 'tb-' + orig.id);
+			var btn = document.createElement('button');
+			btn.type = 'button';
+			btn.className = 'topbar-btn';
+			btn.setAttribute('aria-haspopup', 'listbox');
+			btn.setAttribute('aria-expanded', 'false');
+			btn.innerHTML = '<span class="topbar-btn-label"></span><span class="topbar-btn-caret" aria-hidden="true"></span>';
+			btn.firstChild.textContent = f.label;
 
-			var clone = document.createElement('select');
-			clone.id = 'tb-' + orig.id;
-			clone.className = 'topbar-select';
-			clone.setAttribute('aria-label', f.label);
+			var menu = document.createElement('ul');
+			menu.className = 'topbar-menu';
+			menu.setAttribute('role', 'listbox');
+			menu.hidden = true;
 
 			Array.prototype.forEach.call(orig.options, function (o) {
-				clone.add(new Option(o.text, o.value, o.defaultSelected, o.selected));
+				var li = document.createElement('li');
+				var optBtn = document.createElement('button');
+				optBtn.type = 'button';
+				optBtn.setAttribute('role', 'option');
+				optBtn.setAttribute('aria-selected', String(o.selected));
+				optBtn.dataset.value = o.value;
+				optBtn.textContent = o.text;
+				li.appendChild(optBtn);
+				menu.appendChild(li);
 			});
 
-			clone.value = orig.value;
-
-			field.appendChild(label);
-			field.appendChild(clone);
+			field.appendChild(btn);
+			field.appendChild(menu);
 			host.appendChild(field);
 		});
 	}
 
-	function onContextChange(e) {
-		var target = e.target;
+	function allMenus() {
+		return Array.prototype.slice.call(document.querySelectorAll('.topbar-menu'));
+	}
 
-		if (!target || target.tagName !== 'SELECT' || !target.classList.contains('topbar-select')) {
-			return;
-		}
+	function setMenuOpen(menu, open) {
+		menu.hidden = !open;
 
-		var field = target.closest ? target.closest('.topbar-field') : null;
+		var field = menu.closest ? menu.closest('.topbar-field') : null;
+		var btn = field ? field.querySelector('.topbar-btn') : null;
+
+		if (btn) { btn.setAttribute('aria-expanded', String(open)); }
+	}
+
+	function closeAllMenus() {
+		allMenus().forEach(function (m) {
+			if (!m.hidden) { setMenuOpen(m, false); }
+		});
+	}
+
+	// Opening a menu highlights the currently selected value.
+	function markSelected(menu) {
+		var field = menu.closest ? menu.closest('.topbar-field') : null;
+		var origId = field ? field.dataset.for : null;
+		var orig = origId ? document.getElementById(origId) : null;
+		var selected = orig ? String(orig.value) : null;
+
+		Array.prototype.forEach.call(menu.querySelectorAll('li button'), function (b) {
+			b.setAttribute('aria-selected', String(b.dataset.value === selected));
+		});
+	}
+
+	function chooseOption(optBtn) {
+		var field = optBtn.closest ? optBtn.closest('.topbar-field') : null;
 		var origId = field ? field.dataset.for : null;
 		var orig = origId ? document.getElementById(origId) : null;
 
-		if (orig && orig.value !== target.value) {
-			orig.value = target.value;
+		closeAllMenus();
+
+		if (orig && optBtn.dataset.value && orig.value !== optBtn.dataset.value) {
+			orig.value = optBtn.dataset.value;
 
 			// Let the app's (document-wide) `onchange-ajax-post-form` handler fire.
 			orig.dispatchEvent(new Event('change', { bubbles: true }));
@@ -109,10 +153,50 @@
 		}
 	}
 
-	document.addEventListener('change', onContextChange, true);
+	// Capture-phase: wins before the app's own click handling.
+	document.addEventListener('click', function (e) {
+		var target = e.target;
+
+		if (!target || !target.closest) { return; }
+
+		// Clicking a control button toggles its dropdown.
+		if (target.closest('.topbar-btn')) {
+			var field = target.closest('.topbar-field');
+			var menu = field ? field.querySelector('.topbar-menu') : null;
+
+			if (menu) {
+				if (menu.hidden) {
+					closeAllMenus();
+					markSelected(menu);
+					setMenuOpen(menu, true);
+				} else {
+					setMenuOpen(menu, false);
+				}
+			}
+
+			return;
+		}
+
+		// Choosing a value mirrors it to the hidden original select.
+		if (target.closest('.topbar-menu li button')) {
+			chooseOption(target.closest('.topbar-menu li button'));
+			return;
+		}
+
+		// Any other click closes open dropdowns.
+		closeAllMenus();
+	}, true);
+
+	document.addEventListener('keydown', function (e) {
+		if (e.key === 'Escape') { closeAllMenus(); }
+	});
 
 	// ------------------------------------------------------------------
 	// 2. Per-module collapse buttons
+	//    Submenus are closed by default; only the selected module's menu
+	//    is open. The button on the selected module toggles `.collapsed`
+	//    (hide it); on any other module it toggles `.open` (preview its
+	//    items in place without navigating).
 	// ------------------------------------------------------------------
 	function initCollapse() {
 		var modules = document.querySelectorAll('.adminmenu .menu-module');
@@ -126,19 +210,52 @@
 			btn.className = 'menu-collapse';
 			btn.title = 'Toggle section';
 			btn.setAttribute('aria-label', 'Toggle section');
-			btn.setAttribute('aria-expanded', 'true');
 			btn.innerHTML = '<span class="menu-collapse-icon" aria-hidden="true"></span>';
 
 			btn.addEventListener('click', function (e) {
 				e.preventDefault();
 				e.stopPropagation();
 
-				var collapsed = li.classList.toggle('collapsed');
+				var isActive = !!li.querySelector(':scope > a#selectedModuleLink');
 
-				btn.setAttribute('aria-expanded', String(!collapsed));
+				if (isActive) {
+					var collapsed = li.classList.toggle('collapsed');
+					li.classList.remove('open');
+					btn.setAttribute('aria-expanded', String(!collapsed));
+				} else {
+					var open = li.classList.toggle('open');
+					li.classList.remove('collapsed');
+					btn.setAttribute('aria-expanded', String(open));
+				}
 			});
 
 			li.appendChild(btn);
+		});
+
+		syncCollapseState();
+	}
+
+	// Keep aria-expanded / stale classes in sync with the displayed state:
+	// the newly selected module must always drop down, so any leftover
+	// `.collapsed`/`.open` from a previous visit is cleared.
+	function syncCollapseState() {
+		Array.prototype.forEach.call(document.querySelectorAll('.adminmenu .menu-module'), function (li) {
+			var btn = li.querySelector(':scope > .menu-collapse');
+			var sub = li.querySelector(':scope > .wp-submenu');
+
+			if (!btn || !sub) { return; }
+
+			var isActive = !!li.querySelector(':scope > a#selectedModuleLink');
+
+			// The selected module must drop down.
+			if (isActive) {
+				li.classList.remove('open');
+				li.classList.remove('collapsed');
+			}
+
+			var visible = getComputedStyle(sub).display !== 'none';
+
+			btn.setAttribute('aria-expanded', String(visible));
 		});
 	}
 
@@ -151,6 +268,7 @@
 		try {
 			hydrateContext();
 			initCollapse();
+			syncCollapseState();
 		} finally {
 			window.__ethioRehydrating = false;
 		}
@@ -159,9 +277,17 @@
 	var observer = new MutationObserver(function () { rehydrate(); });
 
 	// Watch the sidebar only (NOT #footerwrap: #topbar-context is rebuilt by
-	// hydrateContext() itself, so observing it would loop forever).
+	// hydrateContext() itself, so observing it would loop forever). The id
+	// attribute filter catches warehouse.js moving `#selectedModuleLink`.
 	function watch(target) {
-		if (target) { observer.observe(target, { childList: true, subtree: true }); }
+		if (target) {
+			observer.observe(target, {
+				childList: true,
+				subtree: true,
+				attributes: true,
+				attributeFilter: ['id']
+			});
+		}
 	}
 
 	watch(document.getElementById('menu-top'));

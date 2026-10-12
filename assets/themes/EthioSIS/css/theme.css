@@ -179,7 +179,9 @@ img { max-width: 100%; height: auto; }
 
 /* Sidebar — the fixed geometry is !important so the app's FixedMenu
    plugin (which toggles inline position/bottom/left on scroll) can
-   never move, resize or un-fix it. */
+   never move, resize or un-fix it. Flex column: identity card pinned
+   on top, the module list scrolls in the middle, Help is pinned at
+   the bottom. */
 #menu {
 	position: fixed !important;
 	top: var(--topbar-h) !important;
@@ -190,18 +192,50 @@ img { max-width: 100%; height: auto; }
 	min-height: 0;
 	margin: 0;
 	float: none;
-	display: block;	/* legacy .hide class must never display:none it */
-	overflow-y: auto;
-	overflow-x: hidden;
+	display: flex;	/* legacy .hide class must never display:none it */
+	flex-direction: column;
+	overflow: hidden;
 	z-index: 90;
 	background: var(--surface);
 	border: 0;
 	border-right: 1px solid var(--border);
-	padding-bottom: var(--sp-5);
 	transition: transform .22s ease;
 }
-#menu::-webkit-scrollbar { width: 10px; }
-#menu::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: var(--radius-pill); border: 3px solid var(--surface); }
+/* The module list is the only part of the sidebar that scrolls. */
+#menu > .adminmenu {
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+#menu > .adminmenu::-webkit-scrollbar { width: 10px; }
+#menu > .adminmenu::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: var(--radius-pill); border: 3px solid var(--surface); }
+
+/* Help, pinned at the bottom of the sidebar (moved here from the top
+   bar on user request). */
+#menu .menu-help {
+	flex: 0 0 auto;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--sp-2);
+	width: 100%;
+	height: auto;
+	min-width: 0;
+	margin: 0;
+	padding: var(--sp-2) var(--sp-3);
+	border: 0;
+	border-top: 1px solid var(--border);
+	border-radius: 0;
+	background: var(--surface);
+	color: var(--text);
+	box-shadow: none;
+	font-size: var(--fs-2);
+	font-weight: 600;
+	text-decoration: none;
+}
+#menu .menu-help:hover { background: var(--surface-3); color: var(--text-soft); }
+#menu .menu-help:active { background: var(--border); }
 
 /* The FixedMenu plugin injects an in-flow spacer <div> after #menu and
    shows it while scrolling. Under the EthioSIS fixed layout it reserves
@@ -217,7 +251,7 @@ img { max-width: 100%; height: auto; }
 	#menu.slide, #menu.hide, #menu.slide.hide {
 		margin-left: 0 !important;
 		transform: none !important;
-		display: block !important;	/* legacy .hide would display:none it */
+		display: flex !important;	/* legacy .hide would display:none it */
 	}
 }
 
@@ -234,36 +268,92 @@ img { max-width: 100%; height: auto; }
 	align-items: center;
 	gap: var(--sp-3);
 	margin-left: var(--sp-1);
+	margin-right: auto;	/* pushes the action buttons (print, logout) to the right */
 	min-width: 0;
 }
-.topbar-field {
-	display: flex;
+.topbar-field { position: relative; min-width: 0; }
+/* Each context control is a button ("School", "Year", "Quarter") that
+   opens a dropdown listing the values (AASS, 2025-2026, Quarter 1…). */
+.topbar-btn {
+	display: inline-flex;
 	align-items: center;
-	gap: 6px;
-	min-width: 0;
-}
-.topbar-field > label {
-	font-size: 11px;
-	font-weight: 650;
-	letter-spacing: .04em;
-	text-transform: uppercase;
-	color: var(--text-muted);
-	white-space: nowrap;
-}
-.topbar-field > select {
-	height: 34px;
-	max-width: 150px;
-	padding: 0 28px 0 12px;
+	gap: var(--sp-1);
+	height: 32px;
+	padding: 0 var(--sp-3);
 	border: 1px solid var(--border-strong);
 	border-radius: var(--radius-pill);
 	background: var(--surface);
 	color: var(--text);
-	font-size: var(--fs-2);
-	font-weight: 550;
+	font-size: 11px;
+	font-weight: 650;
+	letter-spacing: .04em;
+	text-transform: uppercase;
 	box-shadow: var(--shadow-sm);
 	cursor: pointer;
+	white-space: nowrap;
+	transition: background .15s, border-color .15s;
 }
-.topbar-field > select:focus { border-color: var(--brand); box-shadow: var(--focus); }
+.topbar-btn:hover { background: var(--surface-3); }
+.topbar-btn:focus-visible { border-color: var(--brand); box-shadow: var(--focus); }
+.topbar-btn[aria-expanded="true"] {
+	border-color: var(--brand);
+	background: var(--brand-100);
+	color: var(--brand-700);
+}
+.topbar-btn-caret {
+	width: 0; height: 0;
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top: 4px solid currentColor;
+	margin-top: 1px;
+	opacity: .7;
+}
+.topbar-menu {
+	display: none;
+	position: absolute;
+	top: calc(100% + 6px);
+	left: 0;
+	min-width: 170px;
+	margin: 0;
+	padding: var(--sp-1);
+	list-style: none;
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: var(--radius-sm);
+	box-shadow: var(--shadow-md);
+	z-index: 200;
+	max-height: 55vh;
+	overflow-y: auto;
+}
+.topbar-menu:not([hidden]) { display: block; }
+.topbar-menu li { margin: 0; padding: 0; }
+.topbar-menu li button {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--sp-2);
+	width: 100%;
+	margin: 0;
+	padding: var(--sp-2) var(--sp-3);
+	border: 0;
+	border-radius: var(--radius-sm);
+	background: transparent;
+	color: var(--text);
+	font-size: var(--fs-2);
+	font-weight: 550;
+	text-align: left;
+	cursor: pointer;
+	white-space: nowrap;
+	color-scheme: light;
+}
+.topbar-menu li button:hover { background: var(--surface-3); }
+.topbar-menu li button:focus-visible { box-shadow: var(--focus) inset; }
+.topbar-menu li button[aria-selected="true"] { color: var(--brand-700); font-weight: 700; }
+.topbar-menu li button[aria-selected="true"]::after {
+	content: "✓";
+	font-weight: 700;
+	color: var(--brand);
+}
 
 #menu-top {
 	position: sticky;
@@ -383,8 +473,9 @@ img { max-width: 100%; height: auto; }
 }
 #BottomButtonMenu { font-weight: 600; }
 
-/* Push the logout button to the far right. */
-#footerwrap > .BottomButton:last-of-type { margin-left: auto; }
+/* The trailing action buttons (print, logout) are pushed to the right
+   edge by #topbar-context { margin-right: auto } on desktop; on narrow
+   screens where the context is hidden this media query does it. */
 #footerwrap .loading { width: 18px; height: 18px; }
 
 /* ------------------------------------------------------------------ */
@@ -427,8 +518,8 @@ a#selectedModuleLink .module-icon { filter: brightness(0) invert(1); opacity: 1;
 /* Remove the legacy stray chevrons on module rows. */
 a.menu-top::after, .menu-module .menu-top::after { content: none !important; }
 
-/* Submenu panel (rendered inline as an accordion, all modules open).
-   The legacy stylesheet.css hides submenus with the flyout trick
+/* Submenu panel (rendered inline as an accordion). The legacy
+   stylesheet.css hides submenus with the flyout trick
    `position:absolute; top:-1000em` and reveals them on hover. We render
    them inline inside the sidebar instead, so position/top/left/overflow
    must be reset here (with !important: the legacy hover/focus rules also
@@ -470,11 +561,16 @@ a#selectedMenuLink { background: var(--brand-100); color: var(--brand-700); font
 	list-style: none;
 }
 
-/* Submenus render inline, default open. Every module row has its own
-   collapse button (added by the theme's JS): clicking it toggles the
-   `.collapsed` class, which hides that module's items with !important
-   so it wins even over the active-module rule below. */
-.menu-module .wp-submenu { display: block; }
+/* Submenus render inline inside the sidebar and are CLOSED by default:
+   they only drop down under the selected module (warehouse.js marks it
+   with `#selectedModuleLink`). A `.open` class (collapse button on a
+   non-active module) previews another module's items in place; the
+   `.collapsed` class (collapse button on the active module) hides even
+   the active module's items with !important. */
+.adminmenu .menu-module .wp-submenu { display: none; }
+.menu-module.open .wp-submenu { display: block; }
+#selectedModuleLink + .wp-submenu { display: block; }
+.menu-module.collapsed .wp-submenu { display: none !important; }
 
 /* Reserve space on the right of the row for the collapse button. */
 a.menu-top { padding-right: var(--sp-5); }
@@ -507,12 +603,12 @@ a.menu-top { padding-right: var(--sp-5); }
 	height: 8px;
 	border-right: 2px solid currentColor;
 	border-bottom: 2px solid currentColor;
-	transform: rotate(222deg);	/* chevron up = click to collapse */
+	transform: rotate(45deg);	/* chevron down = submenu closed */
 	margin-top: -3px;
 	transition: transform .18s ease;
 }
-.menu-module.collapsed .menu-collapse-icon { transform: rotate(45deg); }	/* chevron down = click to expand */
-.menu-module.collapsed .wp-submenu { display: none !important; }
+.menu-module.open .menu-collapse-icon,
+.menu-module:not(.collapsed):has(> a#selectedModuleLink) .menu-collapse-icon { transform: rotate(222deg); }	/* chevron up = submenu open */
 
 /* Active module header keeps its contrast even with the button overlaid. */
 .menu-module:has(> a#selectedModuleLink) .menu-collapse { color: rgba(255,255,255,.85); }
@@ -894,9 +990,15 @@ details.about-rosariosis summary { cursor: pointer; padding: var(--sp-2); }
 	   the original school/year/quarter selects instead. */
 	#topbar-context { display: none !important; }
 	.topbar-logo img.logo { height: 26px; }
+	/* Right-align the remaining top bar buttons (print, logout). */
+	#footerwrap { justify-content: flex-end; }
+	#footerwrap > .topbar-logo,
+	#footerwrap > #BottomButtonMenu { margin-right: auto; }
 	/* Icon-only top bar buttons when the context selects are hidden. */
 	.BottomButton { padding: 0 var(--sp-2); }
 	.BottomButton > span { display: none; }
+	/* The sidebar Help button keeps its label (it has room). */
+	#menu .menu-help > span { display: inline !important; }
 	#menu-top form {
 		display: block;
 		border-top: 1px solid var(--border);

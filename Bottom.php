@@ -93,17 +93,14 @@ if ( empty( $_REQUEST['bottomfunc'] ) ) : ?>
 		 */
 		do_action( 'Bottom.php|bottom_buttons' ); ?>
 
-		<a id="BottomButtonPrint" href="" target="_blank" title="<?php echo AttrEscape( _( 'Print' ) ); ?>" class="BottomButton">
-			<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6"/><rect x="4" y="9" width="16" height="8" rx="2"/><path d="M8 17h8v4H8z"/></svg>
-			<span><?php echo _( 'Print' ); ?></span>
-		</a>
-		<a id="BottomButtonHelp" href="#!" title="<?php echo AttrEscape( _( 'Help' ) ); ?>" class="BottomButton">
-			<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9a2.5 2.5 0 1 1 3.4 2.3c-.8.4-1 .9-1 1.7"/><path d="M12 17h.01"/></svg>
-			<span><?php echo _( 'Help' ); ?></span>
-		</a>
 		<a href="<?php echo URLEscape( 'index.php?modfunc=logout&token=' . $_SESSION['token'] ); ?>" target="_top" title="<?php echo AttrEscape( _( 'Logout' ) ); ?>" class="BottomButton">
 			<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
 			<span><?php echo _( 'Logout' ); ?></span>
+		</a>
+		<?php // EthioSIS: Print sits at the far right of the top bar. ?>
+		<a id="BottomButtonPrint" href="" target="_blank" title="<?php echo AttrEscape( _( 'Print' ) ); ?>" class="BottomButton">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6"/><rect x="4" y="9" width="16" height="8" rx="2"/><path d="M8 17h8v4H8z"/></svg>
+			<span><?php echo _( 'Print' ); ?></span>
 		</a>
 		<span class="loading BottomButton"></span>
 	</div>
