@@ -4652,6 +4652,17 @@ table.header .header1, table.header .header2 { padding: 0; }
 	font-weight: 650;
 }
 
+/* Portal dashboard stat tiles (legacy markup: table.dashboard). */
+table.dashboard { border-spacing: 0; }
+table.dashboard td { padding: var(--sp-2) var(--sp-4) var(--sp-4); }
+.dashboard-module-title {
+	text-transform: none; font-weight: 650; font-size: var(--fs-1);
+	color: var(--text-muted); margin: 0 0 var(--sp-2);
+}
+.dashboard-module-title span { padding: 0; }
+.dashboard-module-data { padding: 0; font-size: var(--fs-6); font-weight: 700; line-height: 1.15; color: var(--text); }
+.dashboard-module-data .tipmsg-label { color: var(--text-soft); cursor: help; }
+
 /* ------------------------------------------------------------------ */
 /* 9. Tables & lists                                                   */
 /* ------------------------------------------------------------------ */
