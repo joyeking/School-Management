@@ -86,11 +86,32 @@ function ProperDate( $date, $length = 'long' )
 	// Display localized date with strftime().
 	// CSS add .proper-date class.
 	// @since 9.0 Fix PHP8.1 deprecated strftime() use strftime_compat() instead
-	return $comment .
-		'<span class="proper-date">' . strftime_compat(
-			$pref_date,
-			$date_exploded['year'] . '-' . $date_exploded['month'] . '-' . $date_exploded['day']
-		) . '</span>';
+	$localized_date = strftime_compat(
+		$pref_date,
+		$date_exploded['year'] . '-' . $date_exploded['month'] . '-' . $date_exploded['day']
+	);
+
+	/**
+	 * Ethiopian calendar display.
+	 * Dates are still stored as Gregorian; only the display changes.
+	 *
+	 * @see functions/EthiopianCalendar.fnc.php
+	 * @since EthioSIS
+	 */
+	if ( function_exists( 'EthiopianCalendarEnabled' )
+		&& EthiopianCalendarEnabled() )
+	{
+		$gregorian_title = function_exists( 'AttrEscape' )
+			? AttrEscape( $localized_date )
+			: htmlspecialchars( $localized_date, ENT_QUOTES );
+
+		return $comment .
+			'<span class="proper-date" title="' . $gregorian_title . '">' .
+			EthiopianDate( $date, $length ) .
+			'</span>';
+	}
+
+	return $comment . '<span class="proper-date">' . $localized_date . '</span>';
 }
 
 

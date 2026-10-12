@@ -122,6 +122,13 @@ if ( $_REQUEST['modfunc'] === 'save'
 			$_REQUEST['values']['Preferences']['HIDE_ALERTS'] = 'N';
 		}
 
+		// Ethiopian calendar display (EthioSIS).
+		if ( $_REQUEST['tab'] == 'display_options'
+			&& $_REQUEST['values']['Preferences']['ETHIOPIAN_CALENDAR'] != 'Y' )
+		{
+			$_REQUEST['values']['Preferences']['ETHIOPIAN_CALENDAR'] = 'N';
+		}
+
 		if ( $_REQUEST['tab'] == 'display_options'
 			&& isset( $_REQUEST['values']['Preferences']['THEME'] )
 			&& ! in_array( $_REQUEST['values']['Preferences']['THEME'], $theme_options ) )
@@ -456,6 +463,32 @@ if ( ! $_REQUEST['modfunc'] )
 			$allow_na,
 			$extra,
 			$div
+		);
+
+		echo '</td></tr><tr><td>';
+
+		/**
+		 * Ethiopian calendar display (EthioSIS).
+		 * Dates are still stored as Gregorian, only the display changes.
+		 *
+		 * @since EthioSIS
+		 */
+		$ec_pref = Preferences( 'ETHIOPIAN_CALENDAR' );
+
+		if ( $ec_pref === null
+			|| $ec_pref === '' )
+		{
+			global $EthiopianCalendar;
+
+			$ec_pref = ! empty( $EthiopianCalendar ) ? 'Y' : 'N';
+		}
+
+		echo CheckboxInput(
+			$ec_pref,
+			'values[Preferences][ETHIOPIAN_CALENDAR]',
+			_( 'Ethiopian calendar dates' ),
+			'',
+			$new
 		);
 
 		echo '</td></tr><tr><td>';

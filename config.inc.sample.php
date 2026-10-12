@@ -56,6 +56,21 @@ $DefaultSyear = '2025';
 
 
 /**
+ * Ethiopian calendar (EthioSIS)
+ *
+ * When true, dates are DISPLAYED in the Ethiopian calendar
+ * (Amete Mihret, 13 months, "E.C.").
+ * Dates are always STORED as Gregorian (ISO) in the database.
+ *
+ * Users can override this per account:
+ * Users > My Preferences > Display Options > Ethiopian calendar dates.
+ *
+ * @see functions/EthiopianCalendar.fnc.php
+ */
+$EthiopianCalendar = true;
+
+
+/**
  * Email address to receive notifications
  * - new administrator account
  * - new student / user account
