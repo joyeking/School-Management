@@ -391,6 +391,26 @@ if ( ! isset( $_REQUEST['sidefunc'] )
 
 	<?php // User Information. ?>
 
+	<?php // EthioSIS: identity card opens the sidebar ("admin — Administrator").
+		$profile_label = ucfirst( (string) User( 'PROFILE' ) );
+
+		if ( $profile_label === 'Admin' )
+		{
+			$profile_label = _( 'Administrator' );
+		} ?>
+	<div id="menu-user" class="menu-user-card">
+		<span class="user-avatar" aria-hidden="true"><?php
+			echo mb_strtoupper( mb_substr( (string) User( 'NAME' ), 0, 1 ) );
+		?></span>
+		<span class="menu-user-meta">
+			<span class="username"><?php echo User( 'NAME' ); ?></span>
+			<span class="user-role"><?php echo $profile_label; ?></span>
+			<span class="today-date size-1"><?php
+				echo strftime_compat( '%A ' . Preferences( 'DATE' ) );
+			?></span>
+		</span>
+	</div>
+
 	<a href="Modules.php?modname=misc/Portal.php" class="center">
 		<img src="assets/themes/<?php echo Preferences( 'THEME' ); ?>/logo.png" class="logo" alt="Logo">
 	</a>

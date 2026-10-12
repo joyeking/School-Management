@@ -3573,16 +3573,20 @@ img { max-width: 100%; height: auto; }
 	background: transparent;
 }
 
-/* Sidebar */
+/* Sidebar — the fixed geometry is !important so the app's FixedMenu
+   plugin (which toggles inline position/bottom/left on scroll) can
+   never move, resize or un-fix it. */
 #menu {
-	position: fixed;
-	top: var(--topbar-h);
-	bottom: 0;
-	left: 0;
-	width: var(--sidebar-w);
+	position: fixed !important;
+	top: var(--topbar-h) !important;
+	bottom: 0 !important;
+	left: 0 !important;
+	right: auto !important;
+	width: var(--sidebar-w) !important;
 	min-height: 0;
 	margin: 0;
 	float: none;
+	display: block;	/* legacy .hide class must never display:none it */
 	overflow-y: auto;
 	overflow-x: hidden;
 	z-index: 90;
@@ -3595,17 +3599,129 @@ img { max-width: 100%; height: auto; }
 #menu::-webkit-scrollbar { width: 10px; }
 #menu::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: var(--radius-pill); border: 3px solid var(--surface); }
 
+/* The FixedMenu plugin injects an in-flow spacer <div> after #menu and
+   shows it while scrolling. Under the EthioSIS fixed layout it reserves
+   real space (and turns opaque via legacy colours.css), so remove it. */
+/* Kill the FixedMenu spacer <div> only — never #body, which is also a
+   direct sibling of #menu when the spacer is absent (it is on most
+   pages, since the layout is driven by #body { margin-left }). */
+#menu + div:not(#body) { display: none !important; }
+
+/* Legacy .slide/.hide (menu collapse toggle, hamburger on desktop) must
+   never move the always-fixed sidebar. */
+@media (min-width: 875px) {
+	#menu.slide, #menu.hide, #menu.slide.hide {
+		margin-left: 0 !important;
+		transform: none !important;
+		display: block !important;	/* legacy .hide would display:none it */
+	}
+}
+
+/* Top bar: logo first, then context selects (school / year / quarter). */
+.topbar-logo {
+	display: inline-flex;
+	align-items: center;
+	padding: 0 var(--sp-2) 0 var(--sp-3);
+	text-decoration: none !important;
+}
+.topbar-logo img.logo { height: 30px; width: auto; display: block; }
+#topbar-context {
+	display: flex;
+	align-items: center;
+	gap: var(--sp-3);
+	margin-left: var(--sp-1);
+	min-width: 0;
+}
+.topbar-field {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	min-width: 0;
+}
+.topbar-field > label {
+	font-size: 11px;
+	font-weight: 650;
+	letter-spacing: .04em;
+	text-transform: uppercase;
+	color: var(--text-muted);
+	white-space: nowrap;
+}
+.topbar-field > select {
+	height: 34px;
+	max-width: 150px;
+	padding: 0 28px 0 12px;
+	border: 1px solid var(--border-strong);
+	border-radius: var(--radius-pill);
+	background: var(--surface);
+	color: var(--text);
+	font-size: var(--fs-2);
+	font-weight: 550;
+	box-shadow: var(--shadow-sm);
+	cursor: pointer;
+}
+.topbar-field > select:focus { border-color: var(--brand); box-shadow: var(--focus); }
+
 #menu-top {
 	position: sticky;
 	top: 0;
 	z-index: 5;
 	background: var(--surface);
-	padding: var(--sp-4) var(--sp-4) var(--sp-3);
+	padding: var(--sp-2) var(--sp-2) var(--sp-1);
 	border-bottom: 1px solid var(--border);
 }
-#menu-top .logo { max-width: 72px; max-height: 72px; display: block; margin: 0 auto var(--sp-3); }
-#menu-top .username { display: block; font-weight: 650; color: var(--text); font-size: var(--fs-2); }
-#menu-top .today-date { display: block; color: var(--text-muted); margin-bottom: var(--sp-2); }
+/* The logo moved to the top bar — drop the sidebar copy. */
+#menu-top > a.center { display: none !important; }
+/* On desktop the context selects (school/year/quarter) moved to the top
+   bar; the originals stay in this form so the app's change flow works
+   (they are shown again inside the drawer on narrow screens). */
+#menu-top form { display: none; }
+/* The drawer keeps the original selects but not the duplicated name/date. */
+#menu-top form .username,
+#menu-top form .today-date { display: none !important; }
+
+/* Identity card: avatar initial + name + role + date. */
+#menu-user {
+	display: flex;
+	align-items: center;
+	gap: var(--sp-3);
+	padding: var(--sp-2) var(--sp-2) var(--sp-3);
+}
+.user-avatar {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px; height: 40px;
+	flex: 0 0 40px;
+	border-radius: var(--radius-pill);
+	background-color: var(--brand);
+	background-image: linear-gradient(135deg, var(--brand), var(--brand-600));
+	color: var(--text-invert);
+	font-weight: 700;
+	font-size: var(--fs-4);
+	box-shadow: var(--shadow-sm);
+}
+#menu-user .username {
+	display: block;
+	font-weight: 700;
+	color: var(--text);
+	font-size: var(--fs-2);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+#menu-user .user-role {
+	display: block;
+	color: var(--brand-700);
+	font-size: var(--fs-1);
+	font-weight: 650;
+	margin-top: 1px;
+}
+#menu-user .today-date {
+	display: block;
+	color: var(--text-muted);
+	font-size: var(--fs-1);
+	margin-top: 1px;
+}
 #menu-top select { width: 100%; margin-bottom: var(--sp-2); }
 
 /* ------------------------------------------------------------------
@@ -3707,15 +3823,13 @@ a#selectedModuleLink .module-icon { filter: brightness(0) invert(1); opacity: 1;
 /* Remove the legacy stray chevrons on module rows. */
 a.menu-top::after, .menu-module .menu-top::after { content: none !important; }
 
-/* Submenu panel (rendered inline as an accordion). */
+/* Submenu panel (rendered inline as an accordion, all modules open). */
 .wp-submenu {
 	list-style: none;
 	list-style-image: none;
-	background: var(--surface);
-	border: 1px solid var(--border) !important;
-	border-radius: var(--radius);
-	box-shadow: var(--shadow-md);
-	padding: var(--sp-2);
+	background: var(--surface);	/* legacy colors.css sets #111 — keep it light */
+	padding: 2px 0 2px var(--sp-3);
+	margin: 2px 0 var(--sp-2);
 	word-wrap: break-word;
 }
 .wp-submenu li { margin: 0; }
@@ -3731,15 +3845,6 @@ a.menu-top::after, .menu-module .menu-top::after { content: none !important; }
 .wp-submenu a:hover { background: var(--surface-3); color: var(--text); }
 a#selectedMenuLink { background: var(--brand-100); color: var(--brand-700); font-weight: 650; }
 
-/* Click / tap accordion (legacy JS sets #selectedModuleLink). */
-#selectedModuleLink + .wp-submenu {
-	display: block;
-	box-shadow: none;
-	border: 0 !important;
-	padding: 2px 0 2px var(--sp-3);
-	margin: 2px 0 var(--sp-2);
-}
-
 /* Section divider inside a submenu. */
 .menu-inter {
 	margin: var(--sp-3) var(--sp-1) var(--sp-1);
@@ -3751,27 +3856,53 @@ a#selectedMenuLink { background: var(--brand-100); color: var(--brand-700); font
 	list-style: none;
 }
 
-/* Submenus are an inline accordion only.
-   The sidebar itself scrolls (overflow: auto), which would clip a
-   position:absolute hover flyout and make the menu look broken. So the
-   legacy flyout is disabled and the app's own JS (which marks the active
-   module with #selectedModuleLink) shows that module's items inline. */
-.menu-module .wp-submenu { display: none; }
+/* Submenus render inline, default open. Every module row has its own
+   collapse button (added by the theme's JS): clicking it toggles the
+   `.collapsed` class, which hides that module's items with !important
+   so it wins even over the active-module rule below. */
+.menu-module .wp-submenu { display: block; }
 
-.no-touch .menu-module:hover .wp-submenu,
-.no-touch .menu-module:focus-within .wp-submenu {
-	display: none;
-	position: relative;
-	top: auto;
-	left: 0;
-	width: auto;
-	max-height: none;
-	box-shadow: none;
-	border: 0 !important;
+/* Reserve space on the right of the row for the collapse button. */
+a.menu-top { padding-right: var(--sp-5); }
+
+/* Per-module collapse button (positioned on the header row). */
+.menu-module { position: relative; }
+.menu-collapse {
+	position: absolute;
+	top: 0;
+	right: var(--sp-2);
+	z-index: 3;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 42px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: var(--radius-sm);
+	background: transparent;
+	color: var(--text-muted);
+	cursor: pointer;
+	transition: background .15s, color .15s;
 }
+.menu-collapse:hover { background: rgba(0,0,0,.12); color: var(--text); }
+.menu-collapse-icon {
+	display: block;
+	width: 8px;
+	height: 8px;
+	border-right: 2px solid currentColor;
+	border-bottom: 2px solid currentColor;
+	transform: rotate(222deg);	/* chevron up = click to collapse */
+	margin-top: -3px;
+	transition: transform .18s ease;
+}
+.menu-module.collapsed .menu-collapse-icon { transform: rotate(45deg); }	/* chevron down = click to expand */
+.menu-module.collapsed .wp-submenu { display: none !important; }
 
-/* Keep the active module's submenu open even while hovered. */
-#selectedModuleLink + .wp-submenu { display: block; }
+/* Active module header keeps its contrast even with the button overlaid. */
+.menu-module:has(> a#selectedModuleLink) .menu-collapse { color: rgba(255,255,255,.85); }
+.menu-module:has(> a#selectedModuleLink) .menu-collapse:hover { background: rgba(0,0,0,.18); color: #fff; }
 
 /* ------------------------------------------------------------------ */
 /* 6. Module icons — crisp SVG glyphs (see icons-svg.css)              */
@@ -4137,11 +4268,26 @@ details.about-rosariosis summary { cursor: pointer; padding: var(--sp-2); }
 		box-shadow: var(--shadow-lg);
 	}
 	#menu.slide { transform: translateX(0); }
+	#menu.hide { transform: translateX(-105%); }
+	body:has(#menu.slide) { overflow: hidden; }
 	/* The fixed-menu footprint <div> (inline width:320px; float:left) is a
 	   desktop-only spacer; as a drawer the menu reserves no layout space. */
-	#menu.fixedmenu-fixed + div { display: none !important; }
+	#menu + div:not(#body) { display: none !important; }
 	#body { margin-left: 0; padding: var(--sp-3); }
 	.header1 h2 { font-size: var(--fs-5); }
+
+	/* The top bar is too narrow for the cloned selects — the drawer shows
+	   the original school/year/quarter selects instead. */
+	#topbar-context { display: none !important; }
+	.topbar-logo img.logo { height: 26px; }
+	/* Icon-only top bar buttons when the context selects are hidden. */
+	.BottomButton { padding: 0 var(--sp-2); }
+	.BottomButton > span { display: none; }
+	#menu-top form {
+		display: block;
+		border-top: 1px solid var(--border);
+		padding-top: var(--sp-2);
+	}
 }
 
 /* Stack list tables into readable cards on phones. */

@@ -690,6 +690,16 @@ function Warehouse( $mode )
 	<style>.highlight,.highlight-hover:hover{background-color:<?php echo Preferences( 'HIGHLIGHT' ); ?> !important;}</style>
 	<?php
 
+			// EthioSIS: load the theme's own JS (deferred, mtime cache-buster) when present.
+			$ethi_theme_js = 'assets/themes/' . Preferences( 'THEME' ) . '/js/theme.js';
+
+			if ( is_file( $ethi_theme_js ) ) :
+				$ethi_theme_js_hash = hash( 'adler32', filemtime( $ethi_theme_js ) );
+		?>
+	<script defer src="<?php echo $ethi_theme_js; ?>?<?php echo $ethi_theme_js_hash; ?>"></script>
+<?php
+			endif;
+
 			if ( $_ROSARIO['page'] === 'modules'
 				|| $_ROSARIO['page'] === 'first-login'
 				|| $_ROSARIO['page'] === 'create-account'

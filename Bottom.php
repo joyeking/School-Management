@@ -19,6 +19,10 @@ if ( isAJAX() )
 if ( empty( $_REQUEST['bottomfunc'] ) ) : ?>
 
 	<div id="footerwrap">
+		<?php // EthioSIS: logo first, top-left, before the Menu button. ?>
+		<a href="<?php echo URLEscape( 'Modules.php?modname=misc/Portal.php' ); ?>" class="topbar-logo" title="<?php echo AttrEscape( _( 'Home' ) ); ?>">
+			<img src="assets/themes/<?php echo Preferences( 'THEME' ); ?>/logo.png" class="logo" alt="<?php echo AttrEscape( Config( 'NAME' ) ); ?>">
+		</a>
 		<a href="#body" class="a11y-hidden BottomButton">
 			<?php echo _( 'Skip to main content' ); // Accessibility link to skip menus. ?>
 		</a>
@@ -30,6 +34,9 @@ if ( empty( $_REQUEST['bottomfunc'] ) ) : ?>
 			</svg>
 			<span><?php echo _( 'Menu' ); ?></span>
 		</a>
+
+		<?php // EthioSIS: school / year / quarter selects live here (filled in by the theme's JS). ?>
+		<div id="topbar-context" aria-label="<?php echo AttrEscape( _( 'Context' ) ); ?>"></div>
 
 		<?php // FJ icons.
 
