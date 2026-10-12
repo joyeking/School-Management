@@ -3641,14 +3641,27 @@ img { max-width: 100%; height: auto; }
    pages, since the layout is driven by #body { margin-left }). */
 #menu + div:not(#body) { display: none !important; }
 
-/* Legacy .slide/.hide (menu collapse toggle, hamburger on desktop) must
-   never move the always-fixed sidebar. */
+/* Desktop hamburger:
+   - theme.js toggles `body.ethio-sidebar-collapsed` to collapse the
+     sidebar off-canvas (the fixed sidebar never moves on scroll — this
+     collapse is the only user-initiated transform).
+   - The legacy .slide/.hide classes (the app's own expandMenu()) must
+     never move, resize or un-fix the always-fixed sidebar, so they are
+     forced back to the resting state. */
 @media (min-width: 875px) {
 	#menu.slide, #menu.hide, #menu.slide.hide {
 		margin-left: 0 !important;
 		transform: none !important;
 		display: flex !important;	/* legacy .hide would display:none it */
 	}
+	/* Collapsed: slide the sidebar off-canvas and give #body the space. */
+	body.ethio-sidebar-collapsed #menu,
+	body.ethio-sidebar-collapsed #menu.slide,
+	body.ethio-sidebar-collapsed #menu.hide {
+		transform: translateX(-100%) !important;
+	}
+	body.ethio-sidebar-collapsed #body { margin-left: 0; }
+	#body { transition: margin-left .22s ease; }
 }
 
 /* Top bar: logo first, then context selects (school / year / quarter). */
@@ -3759,6 +3772,10 @@ img { max-width: 100%; height: auto; }
 	padding: var(--sp-2) var(--sp-2) var(--sp-1);
 	border-bottom: 1px solid var(--border);
 }
+/* The app's FixedMenu plugin tags #menu with `fixedmenu-fixed` and the
+   legacy stylesheet then pushes #menu-top (and with it the identity card)
+   down 39px. We own the sidebar layout, so never allow that margin. */
+#menu-top { margin-top: 0 !important; }
 /* The logo moved to the top bar — drop the sidebar copy. */
 #menu-top > a.center { display: none !important; }
 /* On desktop the context selects (school/year/quarter) moved to the top
@@ -3931,6 +3948,11 @@ a.menu-top::after, .menu-module .menu-top::after { content: none !important; }
 	background: var(--surface);	/* legacy colors.css sets #111 — keep it light */
 	padding: 2px 0 2px var(--sp-3);
 	margin: 2px 0 var(--sp-2);
+	/* Legacy warehouse.js submenuOffset() sets an inline negative margin-top
+	   on hover (the old flyout trick) which yanks the open accordion panel
+	   up over the neighbouring module headers. The panels are in-flow here,
+	   so pin the top margin and ignore those inline values. */
+	margin-top: 2px !important;
 	word-wrap: break-word;
 }
 .wp-submenu li { margin: 0; }

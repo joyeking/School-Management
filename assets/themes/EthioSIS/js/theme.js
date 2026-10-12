@@ -11,8 +11,11 @@
  *     a value mirrors it to the hidden original and we re-hydrate
  *     whenever the menu re-renders.
  *  2. Add a collapse/expand button to every sidebar module. Submenus are
- *     closed by default; the selected module's menu drops down.
- *  3. Re-hydrate both after the sidebar is replaced by AJAX (sidefunc=update).
+ *     closed by default; the selected module's menu drops down. Opening
+ *     any submenu closes every other one (strict accordion).
+ *  3. Own the hamburger: narrow screens toggle the drawer; on desktop it
+ *     collapses the fixed sidebar off-canvas.
+ *  4. Re-hydrate both after the sidebar is replaced by AJAX (sidefunc=update).
  */
 (function () {
 	'use strict';
@@ -196,7 +199,9 @@
 	//    Submenus are closed by default; only the selected module's menu
 	//    is open. The button on the selected module toggles `.collapsed`
 	//    (hide it); on any other module it toggles `.open` (preview its
-	//    items in place without navigating).
+	//    items in place without navigating). This is a STRICT accordion:
+	//    opening one submenu closes every other one, including the
+	//    selected module's menu.
 	// ------------------------------------------------------------------
 	function initCollapse() {
 		var modules = document.querySelectorAll('.adminmenu .menu-module');
@@ -219,13 +224,38 @@
 				var isActive = !!li.querySelector(':scope > a#selectedModuleLink');
 
 				if (isActive) {
+					// Close any previews, then collapse / expand the selected module.
+					Array.prototype.forEach.call(modules, function (m) {
+						m.classList.remove('open');
+					});
+
 					var collapsed = li.classList.toggle('collapsed');
-					li.classList.remove('open');
+
 					btn.setAttribute('aria-expanded', String(!collapsed));
 				} else {
-					var open = li.classList.toggle('open');
-					li.classList.remove('collapsed');
-					btn.setAttribute('aria-expanded', String(open));
+					// Strict accordion: opening this module closes every other
+					// submenu, including the selected module's.
+					var willOpen = !li.classList.contains('open');
+
+					Array.prototype.forEach.call(modules, function (m) {
+						m.classList.remove('open');
+						m.classList.remove('collapsed');
+					});
+
+					li.classList.toggle('open', willOpen);
+
+					if (willOpen) {
+						var activeMod = document.querySelector('#selectedModuleLink') ?
+							document.querySelector('#selectedModuleLink').closest('.menu-module') : null;
+
+						if (activeMod && activeMod !== li) {
+							// Flip the selected module shut too, so its chevron
+							// reads "closed" while the preview is open.
+							activeMod.classList.add('collapsed');
+						}
+					}
+
+					btn.setAttribute('aria-expanded', String(willOpen));
 				}
 			});
 
@@ -247,10 +277,14 @@
 
 			var isActive = !!li.querySelector(':scope > a#selectedModuleLink');
 
-			// The selected module must drop down.
 			if (isActive) {
+				// The selected module must drop down: clear any leftovers,
+				// including the `.collapsed` a preview may have added.
 				li.classList.remove('open');
 				li.classList.remove('collapsed');
+			} else {
+				// Close stale previews after navigation / menu re-render.
+				li.classList.remove('open');
 			}
 
 			var visible = getComputedStyle(sub).display !== 'none';
@@ -323,20 +357,33 @@
 	}
 
 	document.addEventListener('click', function (e) {
-		if (window.innerWidth > MOBILE_BP) { return; }
-
 		var target = e.target;
 
-		if (target && target.closest && target.closest('#BottomButtonMenu')) {
+		if (!target || !target.closest) { return; }
+
+		// Hamburger: narrow screen → toggle the drawer; desktop → collapse
+		// the fixed sidebar off-canvas (capture-phase wins over the app's
+		// own expandMenu(), which does nothing useful under our layout).
+		if (target.closest('#BottomButtonMenu')) {
 			e.preventDefault();
 			e.stopPropagation();
-			setDrawer(!drawerOpen());
-			document.body.style.overflow = drawerOpen() ? 'hidden' : '';
+
+			if (window.innerWidth > MOBILE_BP) {
+				var collapsed = document.body.classList.toggle('ethio-sidebar-collapsed');
+
+				target.closest('#BottomButtonMenu').setAttribute('aria-expanded', String(!collapsed));
+			} else {
+				setDrawer(!drawerOpen());
+				document.body.style.overflow = drawerOpen() ? 'hidden' : '';
+			}
+
 			return;
 		}
 
+		if (window.innerWidth > MOBILE_BP) { return; }
+
 		// Close the drawer after navigating with a menu link.
-		if (drawerOpen() && target && target.closest && (target.closest('.adminmenu a') || target.closest('#menu-user a'))) {
+		if (drawerOpen() && (target.closest('.adminmenu a') || target.closest('#menu-user a'))) {
 			setDrawer(false);
 		}
 	}, true);
