@@ -79,6 +79,28 @@ module.exports = function(grunt) {
 			},
 			target: {
 				files: {
+					'assets/themes/EthioSIS/stylesheet.css': [
+						'assets/themes/EthioSIS/css/calendar-blue.css',
+						'assets/themes/EthioSIS/css/checkbox-radio.css',
+						'assets/themes/EthioSIS/css/colorbox.css',
+						'assets/themes/EthioSIS/css/legacy/colors.css',
+						'assets/themes/EthioSIS/css/legacy/font.css',
+						'assets/themes/EthioSIS/css/legacy/icons.css',
+						'assets/themes/EthioSIS/css/legacy/stylesheet.css',
+						'assets/themes/EthioSIS/css/legacy/zresponsive.css',
+						'assets/themes/EthioSIS/css/legacy/rtl.css',
+						'assets/themes/EthioSIS/css/icons-svg.css',
+						'assets/themes/EthioSIS/css/theme.css'
+					],
+					'assets/themes/EthioSIS/stylesheet_wkhtmltopdf.css': [
+						'assets/themes/EthioSIS/css/legacy/colors.css',
+						'assets/themes/EthioSIS/css/legacy/font.css',
+						'assets/themes/EthioSIS/css/legacy/icons.css',
+						'assets/themes/EthioSIS/css/legacy/stylesheet.css',
+						'assets/themes/EthioSIS/css/legacy/rtl.css',
+						'assets/themes/EthioSIS/css/legacy/wkhtmltopdf.css',
+						'assets/themes/EthioSIS/css/theme.css'
+					],
 					'assets/themes/WPadmin/stylesheet.css': [
 						'assets/themes/WPadmin/css/calendar-blue.css',
 						'assets/themes/WPadmin/css/colorbox.css',

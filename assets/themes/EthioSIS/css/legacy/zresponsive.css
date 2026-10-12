@@ -1,0 +1,484 @@
+/*Below Laptop MDPI screen*/
+
+@media only screen and (max-width:1270px) {
+	/*stackable Address & Contacts tables: stack before mobile as we have up to 4 large columns*/
+	tr.address.st > td {
+		float: left;
+		width: 100%;
+		box-sizing: border-box
+	}
+	tr.address > td {
+		border-style: none none dotted none;
+		padding: 12px 0 12px 0
+	}
+	tr.address > td:last-of-type {
+		border-style: none;
+	}
+}
+
+/*mobile + tablet vertical*/
+
+@media only screen and (max-width:874px) {
+	/*quick smartphone reset*/
+	.mod {
+		position: relative !important;
+		float: none !important;
+		clear: none !important;
+		margin-left: 0 !important;
+		margin-right: 0 !important;
+		border: 0
+	}
+	#wrap {
+		height: 100%;
+	}
+	#footer {
+		position: fixed !important;
+		top: 0;
+		bottom: auto;
+	}
+	#footerwrap {
+		height: 32px;
+		padding: 3px 12px;
+	}
+	.BottomButton {
+		line-height: 32px;
+	}
+	.BottomButton img {
+		height: 24px;
+	}
+	#BottomButtonMenu svg {
+		height: 24px;
+		width: 24px;
+	}
+	.BottomButton span {
+		display: none
+	}
+	.BottomButton.loading {
+		height: 30px;
+		width: 30px;
+	}
+	#menu .logo {
+		max-width: 64px;
+		max-height: 64px;
+		margin: 8px 11px;
+		float: right
+	}
+	#menu {
+		position: fixed !important;
+		top: 39px;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		width: 100%;
+		overflow-y: scroll;
+		padding-bottom: 0;
+		min-height: auto;
+		height: 0;
+		transition: height 0.3s ease-in-out;
+	}
+	#menu.slide {
+		margin: 0;
+		height: calc(100% - 39px);
+	}
+	/* Fix hide upsell Premium button when mobile menu open */
+	body:has(#menu.slide) .button-upsell-premium {
+		z-index: 0;
+	}
+	.adminmenu {
+		margin-bottom: 5px;
+	}
+	.adminmenu a {
+		padding: 3px 12px;
+	}
+	.wp-submenu a {
+		padding: 6px 12px;
+	}
+	#menu form {
+		padding: 16px 12px 7px;
+	}
+	.menu-top img {
+		height: 30px
+	}
+	#menu-top select {
+		max-width: none;
+	}
+	.current-person {
+		padding: 2px 10px;
+	}
+	.no-touch .menu-module:hover .menu-top:after {
+		content: "";
+	}
+	.no-touch .menu-module:hover .wp-submenu,
+	.no-touch .menu-module:focus-within .wp-submenu,
+	.no-touch .menu-module:hover .wp-submenu {
+		top: -1000em;
+		left: 0;
+	}
+	.no-touch .menu-module .wp-submenu,
+	.no-touch .menu-module:hover .wp-submenu {
+		width: 100%;
+	}
+	#body {
+		width: auto !important;
+		box-sizing: border-box;
+	}
+	.header1 {
+		padding-left: 6px;
+	}
+	.header1 h2 {
+		font-size: 24px;
+		line-height: 26px;
+		padding-left: 34px;
+		text-indent: -34px;
+	}
+	.header1 .module-icon {
+		vertical-align: -6px;
+		width: 30px;
+		height: 30px;
+	}
+	.header2 .fixed-col {
+		word-break: break-all;
+	}
+	#search input,
+	#search select,
+	#LO_search {
+		max-width: 150px
+	}
+	#search .popTable .st td:first-child {
+		padding-bottom: 0;
+	}
+	#LO_search {
+		float: left;
+	}
+	#LO_search + .button {
+		left: -28px;
+		float: left;
+	}
+	#modulesBody textarea {
+		width: 100% !important
+	}
+	/* Chart.js */
+	.chart {
+		width: 90vw;
+		min-width: 450px;
+	}
+	input[type=submit],
+	input[type=reset],
+	input[type=button] {
+		margin: 0 4px;
+	}
+	/*stackable tables*/
+	tr.st > td {
+		float: left;
+		width: 100%;
+		box-sizing: border-box
+	}
+	table.col1-align-right > tbody > tr.st > td:first-child {
+		text-align: left;
+		border-bottom: none;
+	}
+	table.col1-align-right > tbody > tr.st > td:nth-child(2) {
+		border-top: none;
+	}
+	.fixed-col {
+		table-layout: auto;
+		/*no fixed layout for stackable tables*/
+	}
+	.fixed-col select {
+		max-width: 340px;
+	}
+	.divPortalPoll {
+		min-width: 0
+	}
+	.rt .poll-votes-outer div {
+		display: inline-block;
+	}
+	.rt .poll-votes-outer > div:first-child {
+		vertical-align: top;
+		padding-right: 6px;
+	}
+	/*bigger tooltip i*/
+	.tooltip::before {
+		font-size: 0.9em;
+		width: 20px;
+		height: 20px;
+		line-height: 20px;
+	}
+	/* Smaller tooltip size */
+	.tooltip > i {
+		left: -70px;
+		width: 140px;
+		font-size: 0.9em;
+		padding: 5px 7px 7px;
+		line-height: 1.4
+	}
+	/* Login, First login & Password Reset pages */
+	.login,
+	.first-login,
+	.password-reset {
+		padding: 32px 2px;
+	}
+	.password-reset {
+		padding-top: 0;
+	}
+	/* TinyMCE "Insert/Edit image" popup too large on mobile devices */
+	.mce-container .mce-dropzone {
+		height: 60px !important;
+	}
+	/*.mce-container.mce-floatpanel .mce-textbox {
+		/* Max width: 1024px for PDF */
+	/*	max-width: 100% !important;
+	}*/
+	/* Teacher Programs */
+	.teacher-programs-wrapper {
+		padding: 0.5%;
+		width: 99%;
+		margin-left: -0.5%;
+	}
+	#cboxLoadedContent {
+		padding: 8px !important;
+	}
+	.rt select[name^="month_"] {
+		max-width: 60px;
+	}
+}
+
+@media only screen and (max-width:1023px) {
+	#body {
+		padding: 0 6px 38px;
+	}
+	/*responsive <br> does not break line, use inside responsive table*/
+	.rbr {
+		display: none;
+	}
+	/*responsive separator: hide text separator & break line*/
+	.rseparator {
+		visibility: hidden;
+		font-size: 0;
+	}
+	.rseparator:after {
+		content: ' ';
+		display: block;
+	}
+	/*responsive tables*/
+	.rt {
+		display: block;
+		position: relative;
+		width: 100%
+	}
+	.rt thead {
+		display: block;
+		float: left;
+		max-width: 160px;
+	}
+	.rt tbody {
+		display: block;
+		width: auto;
+		position: relative;
+		overflow-x: auto;
+		white-space: nowrap;
+		/* Prevent overscroll/bounce in iOS 16+ MobileSafari and Chrome */
+		overscroll-behavior-y: none;
+	}
+	.rt thead tr {
+		display: block
+	}
+	.rt th,
+	.list.rt th {
+		display: block;
+		line-height: 2.137em;
+		height: 2.137em
+	}
+	.rt th,
+	.rt th a {
+		line-height: 2.137em;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+	.rt tbody tr {
+		display: inline-block;
+		vertical-align: top
+	}
+	.rt td {
+		display: block;
+		line-height: 1.87em;
+		height: 1.87em;
+	}
+	.rt img {
+		max-height: 2em
+	}
+	.rt .rt2colorBox img {
+		max-height: unset;
+	}
+	.rt input,
+	.rt select {
+		margin: 0
+	}
+	.rt tr {
+		border-right-width: 1px;
+		border-right-style: solid
+	}
+	/*rt td too large*/
+	.rt input,
+	.rt select,
+	.rt textarea {
+		max-width: 190px
+	}
+	.list.rt td,
+	.list.rt th {
+		padding: 6px 11px;
+	}
+	.rt .link2colorBox {
+		display: block
+	}
+	.rt .link2colorBox .colorboxinline {
+		background: url('btn/visualize.png') no-repeat;
+		background-size: contain;
+		width: 24px;
+		height: 24px;
+		display: block
+	}
+	.rt2colorBox {
+		overflow: auto
+	}
+	/* Remove padding for LO_SORT arrow */
+	.widefat th a[href*="LO_dir"] {
+		padding-right: 0;
+	}
+	/*if content on 1 line & text <= 36 chars*/
+	.widefat td .rt2colorBox p {
+		margin-top: 0
+	}
+	.rt .link2colorBox + .rt2colorBox {
+		display: none
+	}
+	.rt div.error,
+	.rt div.updated {
+		padding: 0;
+		margin: 0
+	}
+	/*no THEAD repeat*/
+	.rt .thead-repeat {
+		display: none;
+	}
+	/**
+	 * Fix first column (list, table)
+	 *
+	 * @since 12.6
+	 */
+	.fix-first-column th:first-child,
+	.fix-first-column > tbody > tr > td:first-child {
+		position: unset;
+	}
+	.divPortalPoll {
+		max-height: none;
+		overflow-y: visible
+	}
+	/*calendar*/
+	#calendar > thead > tr > th {
+		font-size: 1em;
+		line-height: 1.3;
+		overflow: hidden;
+		word-wrap: normal;
+		padding: 4px;
+	}
+	.calendar-day {
+		position: relative;
+		min-height: 48px
+	}
+	.calendar-day > table {
+		display: block;
+		width: inherit;
+		padding: 0 1px;
+		z-index: 1
+	}
+	.calendar-day td {
+		display: none;
+	}
+	.calendar-day.hover:hover td,
+	.calendar-day .number {
+		display: table-cell;
+	}
+	.calendar-day.hover .calendar-event,
+	.calendar-day.hover .calendar-minutes {
+		width: 100%;
+	}
+	.calendar-day .number {
+		font-size: 1em;
+	}
+	/* TODO fix when tapping in input div onclick, closes day...*/
+	/* Avoid clicking on link / button before the day is fully displayed to user */
+	@keyframes disable-pointer-events {
+		0%,
+		99% {
+			pointer-events: none;
+		}
+	}
+	.calendar-day.hover:hover > table {
+		animation: disable-pointer-events 0.2s;
+		height: auto;
+		min-width: 202px;
+		min-height: 102px;
+		z-index: 2;
+		position: absolute;
+		top: 0;
+		left: 0;
+		background-color: inherit;
+		box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.1)
+	}
+	/*fridays, saturdays*/
+	.calendar-day.thu-fri-sat.hover:hover > table {
+		right: 0;
+		left: auto;
+		box-shadow: -2px 2px 2px 1px rgba(0, 0, 0, 0.1)
+	}
+	/* Scheduling Requests Courses div */
+	#courses_div {
+		position: relative;
+		width: 210px;
+		float: right;
+	}
+	/* Hide List sorting icons */
+	.widefat th a[href*="LO_dir"]:after,
+	.widefat th a[href*="LO_dir"]:hover:after {
+		content: "";
+	}
+}
+
+/*320 & 360px mobile*/
+
+@media only screen and (max-width:479px) {
+	/*Stackable tables: columns always align left*/
+	.st > .align-right,
+	.st > .center {
+		text-align: left;
+	}
+	.header2.align-right input[type="button"],
+	.header2.align-right input[type="reset"],
+	.header2.align-right input[type="submit"] {
+		margin: 0 16px 0 0;
+	}
+	/*calendar*/
+	.calendar-day {
+		height: 36px
+	}
+	.calendar-day .hover:hover {
+		min-width: 177px;
+		min-height: 78px
+	}
+	input,
+	select,
+	.fixed-col select {
+		max-width: 260px
+	}
+	/* Teacher Programs */
+	.teacher-programs-wrapper {
+		padding: 1%;
+		width: 98%;
+		margin-left: -1%;
+	}
+	/*responsive tables*/
+	.rt thead {
+		max-width: 130px;
+	}
+}

@@ -1,0 +1,91 @@
+/* wkhtmltopdf specific */
+
+html,
+body,
+input,
+select,
+textarea {
+	font-size: inherit;
+}
+
+small,
+small * {
+	font-size: 14px;
+}
+
+body {
+	color: #000;
+}
+
+/* Lists */
+
+.list-wrapper {
+	/* Fix wkhtmltopdf issue where table header overlaps first row */
+	/* @link https://www.rosariosis.org/forum/d/91-print-row-in-table-header-overflow-wkhtmltopdf */
+	overflow-x: visible;
+	/* Revert fix for ChosenSelect overflow
+	@link https://github.com/harvesthq/chosen/issues/86#issuecomment-410044171 */
+	padding-bottom: 0;
+	margin-bottom: 0;
+}
+
+/* @since 10.9 */
+
+/* Set Report Cards Comments column (max) width to 33% */
+
+.modname-grades-reportcards-php .list .list-column-comment {
+	width: 33%;
+}
+
+/**
+ * Adjust Mailing Labels top margin for Report Cards
+ *
+ * @since 11.6 Add Mailing Label position
+ */
+
+.modname-grades-reportcards-php .mailing-label-top-margin {
+	/* Add the equivalent of 4 line breaks. */
+	margin-top: 84px;
+}
+
+/* @since 4.3 */
+
+.wkhtmltopdf-header,
+.wkhtmltopdf-footer {
+	width: auto;
+	height: auto;
+}
+
+.wkhtmltopdf-portrait {
+	width: 994px;
+}
+
+.wkhtmltopdf-landscape {
+	width: 1405px;
+}
+
+/* wkhtmltopdf reset */
+
+html,
+body {
+	background: #fff;
+	word-break: normal;
+}
+
+/* @since 12.1 Fix dashboard module icon valign on PDF */
+
+.dashboard-module-title .module-icon,
+.dashboard-module-title img {
+	vertical-align: middle;
+}
+
+/**
+ * Fix wkhtmltopdf error segmentation fault when CSS quotes property defined
+ *
+ * @link https://github.com/wkhtmltopdf/wkhtmltopdf/issues/4115
+ */
+
+blockquote,
+q {
+	quotes: initial
+}

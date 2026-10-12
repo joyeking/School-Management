@@ -1,0 +1,230 @@
+/**
+ * CSS rules for Right To Left languages (Arabic...)
+ *
+ * @since 3.4.2
+ */
+
+/* Place side menu on the right */
+
+/*FixedMenu bug when menu hidden*/
+
+html[dir="RTL"] #menu,
+html[dir="RTL"] #menu.fixedmenu-fixed + div {
+	margin-left: auto;
+	margin-right: 0;
+}
+
+html[dir="RTL"] #menu.slide,
+html[dir="RTL"] #menu.fixedmenu-fixed.slide + div {
+	margin-right: -500px;
+}
+
+html[dir="RTL"] #menu {
+	float: right;
+	border-width: 0 0 0 1px;
+}
+
+html[dir="RTL"] #BottomButtonMenu {
+	float: right;
+}
+
+/* Submenu on module hover */
+
+html[dir="RTL"] .wp-submenu {
+	right: 0;
+	left: auto !important;
+	-webkit-transition: 0s top, 0s right;
+	transition: 0s top, 0s right;
+}
+
+/* Edge browser fix: Do not merge focus-within styles with hover styles */
+
+html.no-touch[dir="RTL"] .menu-module:focus-within .menu-top:after {
+	left: 5px;
+	right: auto;
+}
+
+html.no-touch[dir="RTL"] .menu-module:hover .menu-top:after {
+	left: 5px;
+	right: auto;
+}
+
+/* Edge browser fix: Do not merge focus-within styles with hover styles */
+
+html.no-touch[dir="RTL"] .menu-module:focus-within .wp-submenu {
+	right: 224px;
+}
+
+html.no-touch[dir="RTL"] .menu-module:hover .wp-submenu {
+	right: 224px;
+}
+
+html[dir="RTL"] #selectedModuleLink:after,
+html[dir="RTL"] #selectedModuleLink + .wp-submenu {
+	right: 0;
+	left: auto;
+}
+
+/* ListOutput */
+
+html[dir="RTL"] .widefat td,
+html[dir="RTL"] .widefat th {
+	text-align: right;
+}
+
+/* stackable tables */
+
+html[dir="RTL"] div.st {
+	float: right;
+}
+
+/* Tooltip */
+
+html[dir="RTL"] .tooltip > i {
+	text-align: right;
+}
+
+/*arrows*/
+
+html[dir="RTL"] .arrow.right:before,
+html[dir="RTL"] .switchMenu:before {
+	content: "\25c0\0000a0";
+}
+
+html[dir="RTL"] .switchMenu.switched::before {
+	content: "\25bc\0000a0";
+}
+
+/* Fix for RTL languages */
+
+html[dir=RTL] input[type=checkbox].toggle {
+	right: -9999px;
+}
+
+/* colors.css */
+
+/* Grades */
+
+html[dir="RTL"] .span-grade-points {
+	float: right;
+}
+
+/* Login inputs */
+
+html[dir="RTL"] .login form input[type="password"],
+html[dir="RTL"] .login form input[type="text"] {
+	margin-left: 6px;
+	margin-right: 0;
+}
+
+/* Align right: left */
+
+html[dir="RTL"] .align-right,
+html[dir="RTL"] .align-right td,
+html[dir="RTL"] td.align-right,
+html[dir="RTL"] th.align-right {
+	text-align: left
+}
+
+html[dir="RTL"] table.col1-align-right > tbody > tr > td:first-child {
+	text-align: left;
+}
+
+/* List */
+
+html[dir="RTL"] #LO_search + .button {
+	left: 24px;
+}
+
+html[dir="RTL"] #LO_search {
+	padding-right: 2px;
+	padding-left: 28px;
+}
+
+html[dir="RTL"] .header2.align-right input[type="button"],
+html[dir="RTL"] .header2.align-right input[type="reset"],
+html[dir="RTL"] .header2.align-right input[type="submit"] {
+	margin: 0 16px 0 0;
+}
+
+/* Password Input */
+
+html[dir="RTL"] input:has(+ .password-toggle) {
+	padding-right: 22px;
+}
+
+/* Teacher programs */
+
+html[dir="RTL"] .teacher-programs-wrapper {
+	margin-left: 0;
+	margin-right: -9px;
+}
+
+/* Calendar event */
+
+html[dir="RTL"] .calendar-event div {
+	border-left-width: 0;
+	border-right-width: 4px;
+	border-right-style: solid;
+}
+
+/* Select2 */
+
+html[dir="RTL"] .select2-container--default .select2-selection__rendered {
+	text-align: right;
+}
+
+/**
+ * Fix first column (list, table)
+ *
+ * @since 12.6
+ */
+
+.fix-first-column th:first-child,
+.fix-first-column > tbody > tr > td:first-child {
+	right: 0;
+}
+
+@media only screen and (max-width:1023px) {
+	/* Calendar responsive */
+	html[dir="RTL"] .calendar-day .hover:hover {
+		right: 0;
+	}
+	/*fridays, saturdays*/
+	html[dir="RTL"] .calendar-day.thu-fri-sat .hover:hover {
+		left: 0;
+		right: auto;
+	}
+	html[dir="RTL"] .calendar-day.hover:hover > table {
+		left: auto;
+		right: 0;
+		box-shadow: -2px 2px 2px 1px rgba(0, 0, 0, 0.1)
+	}
+	/*fridays, saturdays*/
+	html[dir="RTL"] .calendar-day.thu-fri-sat.hover:hover > table {
+		left: 0;
+		right: auto;
+		box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.1)
+	}
+}
+
+/*mobile + tablet vertical*/
+
+@media only screen and (max-width:874px) {
+	html[dir="RTL"] .header1 h2 {
+		padding-left: 0;
+		padding-right: 42px;
+	}
+}
+
+@media only screen and (max-width: 479px) {
+	html[dir="RTL"] .st > .align-right,
+	html[dir="RTL"] .st > .center {
+		text-align: right;
+	}
+	html[dir="RTL"] .header2.align-right input[type="button"],
+	html[dir="RTL"] .header2.align-right input[type="reset"],
+	html[dir="RTL"] .header2.align-right input[type="submit"] {
+		margin: 0 0 0 16px;
+	}
+}

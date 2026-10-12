@@ -1,0 +1,31 @@
+/* =====================================================================
+   EthioSIS — module icons as SVG
+   ---------------------------------------------------------------------
+   Replaces the legacy raster `.module-icon` PNGs with crisp vector
+   glyphs. Loaded after the legacy icon rules so it wins on specificity
+   for the modules listed here; unknown/add-on modules keep working via
+   their inline background-image.
+   ===================================================================== */
+
+.module-icon { background-image: url("modules/_default.svg"); }
+
+.module-icon.School_Setup    { background-image: url("modules/School_Setup.svg"); }
+.module-icon.Students        { background-image: url("modules/Students.svg"); }
+.module-icon.Users           { background-image: url("modules/Users.svg"); }
+.module-icon.Attendance      { background-image: url("modules/Attendance.svg"); }
+.module-icon.Grades          { background-image: url("modules/Grades.svg"); }
+.module-icon.Scheduling      { background-image: url("modules/Scheduling.svg"); }
+.module-icon.Student_Billing { background-image: url("modules/Student_Billing.svg"); }
+.module-icon.Accounting      { background-image: url("modules/Accounting.svg"); }
+.module-icon.Discipline      { background-image: url("modules/Discipline.svg"); }
+.module-icon.Eligibility     { background-image: url("modules/Eligibility.svg"); }
+.module-icon.Food_Service    { background-image: url("modules/Food_Service.svg"); }
+.module-icon.Resources       { background-image: url("modules/Resources.svg"); }
+.module-icon.Messaging       { background-image: url("modules/Messaging.svg"); }
+.module-icon.misc            { background-image: url("modules/misc.svg"); }
+.module-icon.Library         { background-image: url("modules/Library.svg"); }
+.module-icon.Reports         { background-image: url("modules/Reports.svg"); }
+.module-icon.Staff_Absences  { background-image: url("modules/Staff_Absences.svg"); }
+.module-icon.SMS              { background-image: url("modules/SMS.svg"); }
+.module-icon.Certificate      { background-image: url("modules/Certificate.svg"); }
+.module-icon.Student_ID_Card  { background-image: url("modules/Student_ID_Card.svg"); }
