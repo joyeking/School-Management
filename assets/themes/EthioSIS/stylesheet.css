@@ -4637,8 +4637,18 @@ a#selectedModuleLink .module-icon { filter: brightness(0) invert(1); opacity: 1;
 /* Remove the legacy stray chevrons on module rows. */
 a.menu-top::after, .menu-module .menu-top::after { content: none !important; }
 
-/* Submenu panel (rendered inline as an accordion, all modules open). */
+/* Submenu panel (rendered inline as an accordion, all modules open).
+   The legacy stylesheet.css hides submenus with the flyout trick
+   `position:absolute; top:-1000em` and reveals them on hover. We render
+   them inline inside the sidebar instead, so position/top/left/overflow
+   must be reset here (with !important: the legacy hover/focus rules also
+   set position & top). */
 .wp-submenu {
+	position: static !important;
+	top: auto !important;
+	left: auto !important;
+	min-width: 0 !important;
+	overflow: visible !important;
 	list-style: none;
 	list-style-image: none;
 	background: var(--surface);	/* legacy colors.css sets #111 — keep it light */
