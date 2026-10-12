@@ -3886,6 +3886,87 @@ table.list a { font-weight: 550; }
 	border-radius: var(--radius) var(--radius) 0 0;
 }
 #LO_search input[type="text"] { min-width: 200px; }
+input#LO_search { min-width: 220px; }
+
+/* ------------------------------------------------------------------ */
+/* 9b. Legacy chrome: list toolbar, postbox cards, edit cells          */
+/* ------------------------------------------------------------------ */
+
+/* The list search bar is a <table class="list-nav"> — lay it out as a
+   proper flex toolbar (left: summary/export, right: search). */
+table.list-nav { width: 100%; }
+table.list-nav > tbody, table.list-nav > tbody > tr {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--sp-2);
+	width: 100%;
+}
+table.list-nav td { border: 0; padding: 0; white-space: nowrap; }
+table.list-nav .align-right { display: flex; align-items: center; gap: var(--sp-2); }
+table.list-nav .size-1 { color: var(--text-muted); }
+.list-save {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	margin-left: var(--sp-2);
+	font-size: var(--fs-1);
+	color: var(--text-muted);
+	opacity: .8;
+}
+.list-save:hover { color: var(--brand-700); opacity: 1; }
+.list-save img { width: 16px; height: 16px; }
+
+/* Cards that are built with <table class="postbox"> (legacy markup). */
+table.postbox {
+	border-collapse: separate;
+	border-spacing: 0;
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	box-shadow: var(--shadow-sm);
+	overflow: hidden;
+	margin: 0 0 var(--sp-5);
+}
+table.postbox > thead th, table.postbox > thead > tr > th {
+	text-align: left;
+	background: var(--surface-2);
+	border-bottom: 1px solid var(--border);
+	padding: var(--sp-3) var(--sp-4);
+}
+table.postbox thead .title {
+	display: block;
+	margin: 0;
+	text-align: left;
+	font-size: var(--fs-3);
+	font-weight: 650;
+	color: var(--text);
+}
+table.postbox td { border: 0; }
+td.popTable { padding: var(--sp-4); }
+td.popTable > table { width: 100%; border-collapse: collapse; }
+td.popTable > table td { padding: var(--sp-2) var(--sp-2) var(--sp-2) 0; vertical-align: top; }
+
+/* Click-to-edit cells: a quiet dashed underline that signals
+   "click to change", brighter on hover. */
+.onclick {
+	cursor: pointer;
+	border-bottom: 1px dashed var(--text-faint);
+	border-radius: var(--radius-sm);
+	transition: background .12s, border-color .12s;
+}
+.onclick:hover, .onclick:focus-visible {
+	background: var(--brand-50);
+	border-bottom-color: var(--brand);
+}
+.onclick:focus-visible { box-shadow: var(--focus); }
+
+/* Legacy search/filter forms ("Find a Student" grid). */
+td.popTable form { margin: 0; }
+td.popTable form table td { padding: var(--sp-2) var(--sp-2) var(--sp-2) 0; }
+td.popTable form table td:first-child { width: 180px; padding-right: var(--sp-4); }
+td.popTable form label { font-weight: 600; color: var(--text-soft); }
+td.popTable form input[type="text"]:not([size]), td.popTable form select { width: 100%; }
 
 /* ------------------------------------------------------------------ */
 /* 10. Forms & inputs                                                  */
@@ -4045,6 +4126,9 @@ details.about-rosariosis summary { cursor: pointer; padding: var(--sp-2); }
 		box-shadow: var(--shadow-lg);
 	}
 	#menu.slide { transform: translateX(0); }
+	/* The fixed-menu footprint <div> (inline width:320px; float:left) is a
+	   desktop-only spacer; as a drawer the menu reserves no layout space. */
+	#menu.fixedmenu-fixed + div { display: none !important; }
 	#body { margin-left: 0; padding: var(--sp-3); }
 	.header1 h2 { font-size: var(--fs-5); }
 }
@@ -4052,6 +4136,10 @@ details.about-rosariosis summary { cursor: pointer; padding: var(--sp-2); }
 /* Stack list tables into readable cards on phones. */
 @media (max-width: 600px) {
 	:root { --topbar-h: 50px; }
+	table.list-nav > tbody > tr { flex-wrap: wrap; }
+	table.list-nav td { white-space: normal; }
+	table.list-nav .align-right { flex: 1 1 100%; }
+	input#LO_search { min-width: 0; width: 100%; }
 	table.list.rt thead, table.widefat thead { display: none; }
 	table.list.rt tr, table.widefat tr {
 		display: block;
