@@ -159,7 +159,7 @@ To give testers something to explore (Grade 9 courses + six students + schedules
 
 ```bash
 cd ~/ethiosis/deploy
-docker compose exec -T db mariadb -uroot -p"$DB_ROOT_PASSWORD" rosariosis < sample-data.sql
+docker compose exec -T db sh -c 'mariadb -uroot -p"$MARIADB_ROOT_PASSWORD" rosariosis' < sample-data.sql
 ```
 
 Demo student logins are `abebe`, `tigist`, `dawit`, `hanna`, `yonas`, `selam` — all with

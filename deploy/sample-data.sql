@@ -8,7 +8,8 @@
 --
 -- Apply with:
 --   mariadb -u root -p rosariosis < deploy/sample-data.sql
--- (inside Docker:  docker compose exec -T db mariadb -uroot -p"$DB_ROOT_PASSWORD" rosariosis < deploy/sample-data.sql )
+-- (inside Docker, from the deploy/ folder:
+--   docker compose exec -T db sh -c 'mariadb -uroot -p"$MARIADB_ROOT_PASSWORD" rosariosis' < sample-data.sql )
 -- ===========================================================================
 
 SET @syear   = 2025;
