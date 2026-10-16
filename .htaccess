@@ -13,6 +13,9 @@ RewriteRule ^(?!assets/FileUploads/).*\.(md|sql)$ - [F]
 RewriteRule (^|/)\.(?!well-known) - [F]
 # Block direct access to specific files
 RewriteRule (^|/)(LICENSE|COPYRIGHT|composer\.lock|composer\.json|package\.json)$ - [F]
+# Block access to deployment assets (Docker/Caddy configs, env files, backups)
+RewriteRule (^|/)deploy(/|$) - [F]
+RewriteRule (^|/)(Dockerfile|docker-compose\.ya?ml|\.dockerignore)$ - [F]
 #
 ## End - Security
 

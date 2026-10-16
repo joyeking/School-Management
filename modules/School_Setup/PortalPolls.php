@@ -205,6 +205,18 @@ if ( ! $_REQUEST['modfunc'] )
 		'SORT_ORDER' => _( 'Sort Order' ),
 		'START_DATE' => _( 'Publishing Options' ),
 	];
+
+	$polls_are_empty = empty( $polls_RET );
+
+	echo '<section class="ethio-onboarding" aria-labelledby="portal-polls-intro-title">' .
+		'<div class="ethio-onboarding-icon" aria-hidden="true">' .
+		'<img src="assets/themes/' . AttrEscape( Preferences( 'THEME' ) ) . '/modules/School_Setup.svg" alt="">' .
+		'</div><div class="ethio-onboarding-copy">' .
+		'<span class="ethio-onboarding-kicker">' . ( $polls_are_empty ? _( 'Start a conversation with your community' ) : _( 'Invite your community to participate' ) ) . '</span>' .
+		'<h3 id="portal-polls-intro-title">' . ( $polls_are_empty ? _( 'There are no polls for this school year yet.' ) : _( 'Ask a question and gather feedback.' ) ) . '</h3>' .
+		'<p>' . ( $polls_are_empty ? _( 'Create a poll below with a clear title, a question, and response options. Then choose who can participate and when it runs.' ) : _( 'Give each poll a clear title, add one or more questions and response options, then set its audience and publishing dates.' ) ) . '</p>' .
+		'<a class="ethio-onboarding-link" href="#portal-poll-editor">' . ( $polls_are_empty ? _( 'Start your first poll' ) : _( 'Create a new poll' ) ) . ' <span aria-hidden="true">→</span></a>' .
+		'</div></section>';
 	//,'START_TIME' => 'Start Time','END_TIME' => 'End Time'
 
 	$link['add']['html'] = [
@@ -220,11 +232,13 @@ if ( ! $_REQUEST['modfunc'] )
 	$link['remove']['variables'] = [ 'id' => 'ID' ];
 
 	echo '<form action="' . URLEscape( 'Modules.php?modname=' . $_REQUEST['modname'] . '&modfunc=update' ) . '" method="POST">';
-	DrawHeader( '', SubmitButton() );
+	echo '<div class="portal-list-toolbar"><div><h3>' . _( 'Your polls' ) . '</h3>' .
+		'<p>' . _( 'Create and manage questions for your school portal.' ) . '</p></div>' .
+		'<div class="portal-list-actions">' . SubmitButton() . '</div></div>';
 
+	echo '<div id="portal-poll-editor"' . ( $polls_are_empty ? ' class="portal-empty-list"' : '' ) . '>';
 	ListOutput( $polls_RET, $columns, 'Poll', 'Polls', $link );
-
-	echo '<div class="center">' . SubmitButton() . '</div>';
+	echo '</div>';
 	echo '</form>';
 }
 

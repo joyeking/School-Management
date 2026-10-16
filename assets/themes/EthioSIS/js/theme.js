@@ -10,9 +10,11 @@
  *     so the app's `onchange-ajax-post-form` flow keeps working; choosing
  *     a value mirrors it to the hidden original and we re-hydrate
  *     whenever the menu re-renders.
- *  2. Add a collapse/expand button to every sidebar module. Submenus are
- *     closed by default; the selected module's menu drops down. Opening
- *     any submenu closes every other one (strict accordion).
+ *  2. The sidebar modules are an accordion, INSIDE the sidebar: each module
+ *     row is the only control — click it to drop its submenu down, click it
+ *     again to close. Opening one row closes every other. The selected
+ *     module stays open. There is NO separate icon/button on the row (the
+ *     caret is pure CSS), so a row always has a single, predictable action.
  *  3. Own the hamburger: narrow screens toggle the drawer; on desktop it
  *     collapses the fixed sidebar off-canvas.
  *  4. Re-hydrate both after the sidebar is replaced by AJAX (sidefunc=update).
@@ -195,103 +197,68 @@
 	});
 
 	// ------------------------------------------------------------------
-	// 2. Per-module collapse buttons
-	//    Submenus are closed by default; only the selected module's menu
-	//    is open. The button on the selected module toggles `.collapsed`
-	//    (hide it); on any other module it toggles `.open` (preview its
-	//    items in place without navigating). This is a STRICT accordion:
-	//    opening one submenu closes every other one, including the
-	//    selected module's menu.
+	// 2. Sidebar accordion
+	//    Submenus drop down INSIDE the sidebar. Each module row is the only
+	//    control for its submenu: clicking the row toggles it, clicking any
+	//    other row closes this one and opens that one (strict accordion).
+	//    The selected module (marked #selectedModuleLink by the app's own
+	//    openMenu()) is open by default.
+	//    There is deliberately no icon/button element on the row — a second
+	//    control would have a second function (the bug this replaces). The
+	//    caret is drawn in CSS on the row itself.
 	// ------------------------------------------------------------------
-	function initCollapse() {
-		var modules = document.querySelectorAll('.adminmenu .menu-module');
-
-		Array.prototype.forEach.call(modules, function (li) {
-			if (li.querySelector(':scope > .menu-collapse')) { return; }
-
-			var btn = document.createElement('button');
-
-			btn.type = 'button';
-			btn.className = 'menu-collapse';
-			btn.title = 'Toggle section';
-			btn.setAttribute('aria-label', 'Toggle section');
-			btn.innerHTML = '<span class="menu-collapse-icon" aria-hidden="true"></span>';
-
-			btn.addEventListener('click', function (e) {
-				e.preventDefault();
-				e.stopPropagation();
-
-				var isActive = !!li.querySelector(':scope > a#selectedModuleLink');
-
-				if (isActive) {
-					// Close any previews, then collapse / expand the selected module.
-					Array.prototype.forEach.call(modules, function (m) {
-						m.classList.remove('open');
-					});
-
-					var collapsed = li.classList.toggle('collapsed');
-
-					btn.setAttribute('aria-expanded', String(!collapsed));
-				} else {
-					// Strict accordion: opening this module closes every other
-					// submenu, including the selected module's.
-					var willOpen = !li.classList.contains('open');
-
-					Array.prototype.forEach.call(modules, function (m) {
-						m.classList.remove('open');
-						m.classList.remove('collapsed');
-					});
-
-					li.classList.toggle('open', willOpen);
-
-					if (willOpen) {
-						var activeMod = document.querySelector('#selectedModuleLink') ?
-							document.querySelector('#selectedModuleLink').closest('.menu-module') : null;
-
-						if (activeMod && activeMod !== li) {
-							// Flip the selected module shut too, so its chevron
-							// reads "closed" while the preview is open.
-							activeMod.classList.add('collapsed');
-						}
-					}
-
-					btn.setAttribute('aria-expanded', String(willOpen));
-				}
-			});
-
-			li.appendChild(btn);
-		});
-
-		syncCollapseState();
+	function sidebarModules() {
+		return Array.prototype.slice.call(
+			document.querySelectorAll( '.adminmenu > .menu-module' )
+		);
 	}
 
-	// Keep aria-expanded / stale classes in sync with the displayed state:
-	// the newly selected module must always drop down, so any leftover
-	// `.collapsed`/`.open` from a previous visit is cleared.
-	function syncCollapseState() {
-		Array.prototype.forEach.call(document.querySelectorAll('.adminmenu .menu-module'), function (li) {
-			var btn = li.querySelector(':scope > .menu-collapse');
-			var sub = li.querySelector(':scope > .wp-submenu');
+	function selectedModule() {
+		var link = document.querySelector( '.adminmenu a#selectedModuleLink' );
 
-			if (!btn || !sub) { return; }
-
-			var isActive = !!li.querySelector(':scope > a#selectedModuleLink');
-
-			if (isActive) {
-				// The selected module must drop down: clear any leftovers,
-				// including the `.collapsed` a preview may have added.
-				li.classList.remove('open');
-				li.classList.remove('collapsed');
-			} else {
-				// Close stale previews after navigation / menu re-render.
-				li.classList.remove('open');
-			}
-
-			var visible = getComputedStyle(sub).display !== 'none';
-
-			btn.setAttribute('aria-expanded', String(visible));
-		});
+		return link && link.closest ? link.closest( '.menu-module' ) : null;
 	}
+
+	function setModuleOpen( module, open ) {
+		module.classList.toggle( 'open', !! open );
+
+		var top = module.querySelector( ':scope > a.menu-top' );
+
+		if ( top ) {
+			top.setAttribute( 'aria-expanded', String( !! open ) );
+		}
+	}
+
+	function syncAccordion() {
+		var selected = selectedModule();
+
+		sidebarModules().forEach( function ( module ) {
+			setModuleOpen( module, module === selected );
+		} );
+	}
+
+	// Capture phase: this runs BEFORE the app's own `a` click handler, so a
+	// module row opens its submenu instead of navigating (submenu links do).
+	document.addEventListener( 'click', function ( e ) {
+		var target = e.target;
+
+		if ( ! target || ! target.closest ) { return; }
+
+		var top = target.closest( '.adminmenu > .menu-module > a.menu-top' );
+
+		if ( ! top ) { return; }
+
+		e.preventDefault();
+		e.stopPropagation();
+
+		var module = top.parentNode,
+			willOpen = ! module.classList.contains( 'open' );
+
+		// Strict accordion: close every module, then open only this one.
+		sidebarModules().forEach( function ( m ) { setModuleOpen( m, false ); } );
+
+		setModuleOpen( module, willOpen );
+	}, true );
 
 	// ------------------------------------------------------------------
 	// 3. Re-hydrate whenever the sidebar is replaced (sidefunc=update)
@@ -301,8 +268,7 @@
 		window.__ethioRehydrating = true;
 		try {
 			hydrateContext();
-			initCollapse();
-			syncCollapseState();
+			syncAccordion();
 		} finally {
 			window.__ethioRehydrating = false;
 		}
@@ -344,6 +310,7 @@
 
 	function setDrawer(open) {
 		var menu = document.getElementById('menu');
+		var menuButton = document.getElementById('BottomButtonMenu');
 
 		if (!menu) { return; }
 
@@ -353,6 +320,10 @@
 		} else {
 			menu.classList.remove('slide');
 			document.body.style.overflow = '';
+		}
+
+		if (menuButton) {
+			menuButton.setAttribute('aria-expanded', String(!!open));
 		}
 	}
 
@@ -382,12 +353,121 @@
 
 		if (window.innerWidth > MOBILE_BP) { return; }
 
+		// Tap the scrim or press Escape to dismiss the drawer.
+		if (drawerOpen() && !target.closest('#menu')) {
+			setDrawer(false);
+			return;
+		}
+
 		// Close the drawer after navigating with a menu link.
 		if (drawerOpen() && (target.closest('.adminmenu a') || target.closest('#menu-user'))) {
 			setDrawer(false);
 		}
 	}, true);
 
+	document.addEventListener('keydown', function (e) {
+		if (e.key === 'Escape' && drawerOpen()) {
+			setDrawer(false);
+		}
+	});
+
+	// ------------------------------------------------------------------
+	// 5. The identity card is the Home button
+	//    Side.php renders it as a real <a href="...Portal.php">, and the
+	//    app's own click handler normally navigates it (AJAX). This makes
+	//    that guaranteed: the very same AJAX navigation when the app's
+	//    handler is available, a real page load otherwise. Registered
+	//    after the drawer handler above so closing the drawer (narrow
+	//    screens) still happens first.
+	// ------------------------------------------------------------------
+	document.addEventListener('click', function (e) {
+		var target = e.target;
+
+		if (!target || !target.closest) { return; }
+
+		var card = target.closest('#menu-user');
+
+		if (!card) { return; }
+
+		e.preventDefault();
+		e.stopImmediatePropagation();	// skip the app's link handler (we do it here)
+
+		var handled = false;
+
+		if (typeof ajaxLink === 'function') {
+			// ajaxLink() returns false once it started the AJAX navigation.
+			handled = ajaxLink(card) === false;
+		}
+
+		if (!handled) {
+			// card.href is the resolved absolute URL.
+			window.location.href = card.href;
+		}
+	}, true);
+
 	// Initial pass.
 	rehydrate();
+
+	// ------------------------------------------------------------------
+	// 6. Light / dark scheme toggle (top bar).
+	//    The scheme lives in the ethio_scheme cookie, which Warehouse.php
+	//    stamps onto <html data-theme> on the next document. Inline
+	//    <script> is banned by the CSP, so this click just writes the
+	//    cookie and flips the attribute in place: the current page restyles
+	//    instantly, and every later full page load starts in that scheme.
+	// ------------------------------------------------------------------
+	var SCHEME_COOKIE = 'ethio_scheme';
+	var SCHEME_COOKIE_DAYS = 365;
+
+	function currentScheme() {
+		return document.documentElement.getAttribute('data-theme') === 'dark'
+			? 'dark'
+			: 'light';
+	}
+
+	function writeSchemeCookie(scheme) {
+		var expires = new Date();
+
+		expires.setFullYear(expires.getFullYear() + SCHEME_COOKIE_DAYS);
+
+		// path=/ so the choice survives navigation into modules/ and assets/.
+		document.cookie = SCHEME_COOKIE + '=' + scheme
+			+ '; expires=' + expires.toUTCString()
+			+ '; path=/; SameSite=Lax';
+	}
+
+	function applyScheme(scheme) {
+		document.documentElement.setAttribute('data-theme', scheme);
+
+		var button = document.getElementById('BottomButtonScheme');
+
+		if (!button) { return; }
+
+		var toLight = scheme === 'dark';
+		var label = toLight ? 'Light mode' : 'Dark mode';
+
+		button.setAttribute('data-scheme', scheme);
+		button.setAttribute('aria-pressed', String(toLight));
+		button.setAttribute('aria-label', label);
+		button.setAttribute('title', label);
+
+		var text = button.querySelector('span');
+
+		if (text) { text.textContent = label; }
+	}
+
+	document.addEventListener('click', function (e) {
+		var target = e.target;
+
+		if (!target || !target.closest) { return; }
+
+		if (!target.closest('#BottomButtonScheme')) { return; }
+
+		e.preventDefault();
+
+		var scheme = currentScheme() === 'dark' ? 'light' : 'dark';
+
+		writeSchemeCookie(scheme);
+		applyScheme(scheme);
+	});
 })();

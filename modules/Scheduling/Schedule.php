@@ -261,7 +261,7 @@ if ( UserStudentID()
 	if ( AllowEdit() )
 	{
 		$columns['SCHEDULER_LOCK'] = '<img src="assets/themes/' . Preferences( 'THEME' ) .
-			'/btn/locked.png" class="button bigger" alt="' . AttrEscape( _( 'Locked' ) ) . '">' .
+			'/btn/locked.svg" class="button bigger" alt="' . AttrEscape( _( 'Locked' ) ) . '">' .
 			'<span class="a11y-hidden">' . _( 'Locked' ) . '</span>';
 
 	}

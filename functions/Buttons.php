@@ -77,10 +77,24 @@ function button( $type, $text = '', $link = '', $class = '' )
 
 	$button_file = 'assets/themes/' . Preferences( 'THEME' ) . '/btn/' . $type . '_button.png';
 
-	if ( ! file_exists( $button_file ) )
+	// Prefer modern SVG versions of the button icons when available.
+	$button_file_svg = 'assets/themes/' . Preferences( 'THEME' ) . '/btn/' . $type . '_button.svg';
+
+	if ( file_exists( $button_file_svg ) )
+	{
+		$button_file = $button_file_svg;
+	}
+	elseif ( ! file_exists( $button_file ) )
 	{
 		// Allow for button files missing the "_button" suffix.
 		$button_file = str_replace( '_button', '', $button_file );
+
+		$button_file_svg = 'assets/themes/' . Preferences( 'THEME' ) . '/btn/' . $type . '.svg';
+
+		if ( file_exists( $button_file_svg ) )
+		{
+			$button_file = $button_file_svg;
+		}
 	}
 
 	$button .= '<img src="' . URLEscape( $button_file ) . '" class="button ' . $class . '" alt="' . AttrEscape( ucfirst( str_replace( '_', ' ', $type ) ) ) . '">';

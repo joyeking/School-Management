@@ -168,6 +168,18 @@ if ( ! $_REQUEST['modfunc'] )
 		'START_DATE' => _( 'Publishing Options' ),
 	];
 
+	$notes_are_empty = empty( $notes_RET );
+
+	echo '<section class="ethio-onboarding" aria-labelledby="portal-notes-intro-title">' .
+		'<div class="ethio-onboarding-icon" aria-hidden="true">' .
+		'<img src="assets/themes/' . AttrEscape( Preferences( 'THEME' ) ) . '/modules/School_Setup.svg" alt="">' .
+		'</div><div class="ethio-onboarding-copy">' .
+		'<span class="ethio-onboarding-kicker">' . ( $notes_are_empty ? _( 'A simple way to share important updates' ) : _( 'Keep your school community informed' ) ) . '</span>' .
+		'<h3 id="portal-notes-intro-title">' . ( $notes_are_empty ? _( 'There are no notes for this school year yet.' ) : _( 'Share a clear update with families and staff.' ) ) . '</h3>' .
+		'<p>' . ( $notes_are_empty ? _( 'Start with a title and message below. You can add a document and choose who can see your note and when it appears.' ) : _( 'Write a note, add a document if needed, then choose who can see it and when it should appear.' ) ) . '</p>' .
+		'<a class="ethio-onboarding-link" href="#portal-note-editor">' . ( $notes_are_empty ? _( 'Start your first note' ) : _( 'Create a new note' ) ) . ' <span aria-hidden="true">→</span></a>' .
+		'</div></section>';
+
 	//,'START_TIME' => 'Start Time','END_TIME' => 'End Time'
 	$link['add']['html'] = [
 		'TITLE' => _makeTextInput( '', 'TITLE' ),
@@ -182,12 +194,13 @@ if ( ! $_REQUEST['modfunc'] )
 	$link['remove']['variables'] = [ 'id' => 'ID' ];
 
 	echo '<form action="' . URLEscape( 'Modules.php?modname=' . $_REQUEST['modname'] . '&modfunc=update' ) . '" method="POST" enctype="multipart/form-data">';
+	echo '<div class="portal-list-toolbar"><div><h3>' . _( 'Your notes' ) . '</h3>' .
+		'<p>' . _( 'Draft and manage the messages shown in the school portal.' ) . '</p></div>' .
+		'<div class="portal-list-actions">' . SubmitButton() . '</div></div>';
 
-	DrawHeader( '', SubmitButton() );
-
+	echo '<div id="portal-note-editor"' . ( $notes_are_empty ? ' class="portal-empty-list"' : '' ) . '>';
 	ListOutput( $notes_RET, $columns, 'Note', 'Notes', $link );
-
-	echo '<br /><div class="center">' . SubmitButton() . '</div>';
+	echo '</div>';
 	echo '</form>';
 }
 

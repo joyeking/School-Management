@@ -666,6 +666,22 @@ function Warehouse( $mode )
 
 			$lang_2_chars = mb_substr( $_SESSION['locale'], 0, 2 );
 
+			/**
+			 * EthioSIS: colour scheme, chosen with the top bar toggle.
+			 *
+			 * Read server-side and stamped on <html> so the very first paint is
+			 * already in the right scheme. Inline <script> is banned by the CSP
+			 * (script-src 'self'), so a cookie is the only flash-free channel.
+			 *
+			 * @see assets/themes/EthioSIS/js/theme.js  ThemeSchemeToggle()
+			 */
+			$ethio_scheme = isset( $_COOKIE['ethio_scheme'] )
+				&& $_COOKIE['ethio_scheme'] === 'dark'
+				? 'dark'
+				: 'light';
+
+			$ethio_scheme_attr = ' data-theme="' . $ethio_scheme . '"';
+
 			// Right to left direction.
 			$RTL_languages = [ 'ar', 'he', 'dv', 'fa', 'ur', 'ps' ];
 
@@ -677,7 +693,7 @@ function Warehouse( $mode )
 			$stylesheet_css_hash = hash( 'adler32', filemtime( $stylesheet_css ) );
 			?>
 <!doctype html>
-<html lang="<?php echo $lang_2_chars; ?>"<?php echo $dir_RTL; ?>>
+<html lang="<?php echo $lang_2_chars; ?>"<?php echo $dir_RTL . $ethio_scheme_attr; ?>>
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">

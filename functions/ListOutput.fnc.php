@@ -473,11 +473,22 @@ function ListOutput( $result, $column_names, $singular = '.', $plural = '.', $li
 				$result_text = mb_strtolower( $result_text );
 			}
 
-			// No results message. Default to "Results".
-			echo '<b class="size-1">' . sprintf(
+			// Clear empty state with a next step when this list has an add action.
+			$empty_message = sprintf(
 				_( 'No %s were found.' ),
 				$result_text
-			) . '</b> ';
+			);
+
+			$has_add_action = $options['add'] &&
+				( ! empty( $link['add']['html'] )
+					|| ! empty( $link['add']['link'] )
+					|| ! empty( $link['add']['span'] ) );
+
+			echo '<div class="ethio-list-empty"><b class="size-1">' . $empty_message . '</b>' .
+				'<span>' . ( $has_add_action ?
+					_( 'Use the add control below to create the first entry. You can update it later.' ) :
+					_( 'Items will appear here when they match the current selection.' ) ) .
+				'</span></div>';
 		}
 
 		if ( $options['save']
@@ -488,7 +499,7 @@ function ListOutput( $result, $column_names, $singular = '.', $plural = '.', $li
 			echo '<a href="' . $PHP_tmp_SELF . '&' . $extra .
 			'&LO_save=' . $options['save'] .
 			'&_ROSARIO_PDF=true" class="list-save" target="_blank"><img src="assets/themes/' .
-			Preferences( 'THEME' ) . '/btn/download.png" class="alignImg" title="' .
+			Preferences( 'THEME' ) . '/btn/download.svg" class="alignImg" title="' .
 			AttrEscape( _( 'Export list' ) ) . '" alt="' . AttrEscape( _( 'Export list' ) ) . '"></a>';
 		}
 
@@ -521,7 +532,7 @@ function ListOutput( $result, $column_names, $singular = '.', $plural = '.', $li
 			AttrEscape( DBUnescapeString( $LO_search ) ) .
 			'" placeholder="' . AttrEscape( _( 'Search' ) ) .
 			'" data-url="' . $search_url . '" autocomplete="off">
-				<img src="assets/themes/' . Preferences( 'THEME' ) . '/btn/visualize.png"
+				<img src="assets/themes/' . Preferences( 'THEME' ) . '/btn/visualize.svg"
 				class="button" alt="" title="' . AttrEscape( _( 'Search' ) ) . '">
 				<label for="LO_search" class="a11y-hidden">' . _( 'Search' ) . '</label>';
 

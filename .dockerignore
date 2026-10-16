@@ -1,0 +1,14 @@
+# Docker build context exclusions (context = repository root).
+.git
+.gitignore
+.gitattributes
+node_modules
+
+# Never ship secrets or the machine-local dev config into the image.
+# config.inc.php is generated inside the container by deploy/entrypoint.sh.
+config.inc.php
+.env
+deploy/.env
+deploy/backups
+
+*.log

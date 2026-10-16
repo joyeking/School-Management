@@ -630,7 +630,7 @@ function MarkDownInputPreview( $input_id )
 		<a href="#!" data-id="<?php echo AttrEscape( $input_id ); ?>" class="tab"><?php echo _( 'Preview' ); ?></a>
 
 		<a href="https://gitlab.com/francoisjacquet/rosariosis/wikis/Markdown-Cheatsheet" title="<?php echo AttrEscape( _( 'Mastering MarkDown' ) ); ?>" target="_blank" class="md-link">
-			<img class="button" src="assets/themes/<?php echo Preferences( 'THEME' ); ?>/btn/md_button.png" alt="<?php echo AttrEscape( _( 'Mastering MarkDown' ) ); ?>">
+			<img class="button" src="assets/themes/<?php echo Preferences( 'THEME' ); ?>/btn/md_button.svg" alt="<?php echo AttrEscape( _( 'Mastering MarkDown' ) ); ?>">
 		</a>
 		<div class="markdown-to-html" id="<?php echo GetInputID( 'divMDPreview' . $input_id ); ?>"></div>
 	</div>

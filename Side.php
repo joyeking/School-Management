@@ -391,35 +391,21 @@ if ( ! isset( $_REQUEST['sidefunc'] )
 
 	<?php // User Information. ?>
 
-	<?php // EthioSIS: identity card links home (like the legacy card).
-		$profile_label = ucfirst( (string) User( 'PROFILE' ) );
-
-		if ( $profile_label === 'Admin' )
-		{
-			$profile_label = _( 'Administrator' );
-		} ?>
+	<?php // EthioSIS: identity card — just the admin's name, a chevron and
+		// today's date. (The avatar initial and the role badge were dropped:
+		// the name alone identifies the signed-in admin.) It links home, so
+		// the whole card is the link and the chevron signals it. ?>
 	<a id="menu-user" class="menu-user-card" href="<?php echo URLEscape( 'Modules.php?modname=misc/Portal.php' ); ?>" title="<?php echo AttrEscape( _( 'Home' ) ); ?>">
-		<span class="user-avatar" aria-hidden="true"><?php
-			echo mb_strtoupper( mb_substr( (string) User( 'NAME' ), 0, 1 ) );
-		?></span>
 		<span class="menu-user-meta">
 			<span class="username"><?php echo User( 'NAME' ); ?></span>
-			<span class="user-role"><?php echo $profile_label; ?></span>
-			<span class="today-date size-1"><?php
-				echo strftime_compat( '%A ' . Preferences( 'DATE' ) );
-			?></span>
 		</span>
+		<span class="user-go" aria-hidden="true"><svg class="icon" width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66 133.66l-80 80a8 8 0 0 1-11.32-11.32L164.69 128 90.34 53.66a8 8 0 0 1 11.32-11.32l80 80A8 8 0 0 1 181.66 133.66z"/></svg></span>
+		<span class="today-date size-1"><?php
+			echo strftime_compat( '%A ' . Preferences( 'DATE' ) );
+		?></span>
 	</a>
 
-	<a href="Modules.php?modname=misc/Portal.php" class="center">
-		<img src="assets/themes/<?php echo Preferences( 'THEME' ); ?>/logo.png" class="logo" alt="Logo">
-	</a>
 	<form action="Side.php?sidefunc=update" method="POST" target="menu-top">
-		<span class="username br-after"><?php echo User( 'NAME' ); ?></span>
-		<?php
-			// Localized today's date.
-			echo '<span class="today-date size-1">' . strftime_compat( '%A ' . Preferences( 'DATE' ) ) . '</span>';
-		?>
 		<br>
 		<?php // School SELECT (Admins & Teachers only).
 		if ( User( 'PROFILE' ) === 'admin'
@@ -799,9 +785,17 @@ if ( ! isset( $_REQUEST['sidefunc'] )
 
 </ul><!-- .adminmenu -->
 
+<?php // EthioSIS: Logout sits at the bottom of the sidebar, above Help
+  // (moved here from the top bar, where the scheme toggle now lives). ?>
+<a href="<?php echo URLEscape( 'index.php?modfunc=logout&token=' . $_SESSION['token'] ); ?>" target="_top"
+	title="<?php echo AttrEscape( _( 'Logout' ) ); ?>" class="BottomButton menu-logout">
+	<svg viewBox="0 0 256 256" aria-hidden="true"><path d="M124,216a12,12,0,0,1-12,12H48a12,12,0,0,1-12-12V40A12,12,0,0,1,48,28h64a12,12,0,0,1,0,24H60V204h52A12,12,0,0,1,124,216Zm108.49-96.49-40-40a12,12,0,0,0-17,17L195,116H112a12,12,0,0,0,0,24h83l-19.52,19.51a12,12,0,0,0,17,17l40-40A12,12,0,0,0,232.49,119.51Z"/></svg>
+	<span><?php echo _( 'Logout' ); ?></span>
+</a>
+
 <?php // EthioSIS: Help button pinned at the bottom of the sidebar. ?>
 <a href="#!" id="BottomButtonHelp" title="<?php echo AttrEscape( _( 'Help' ) ); ?>" class="BottomButton menu-help">
-	<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9a2.5 2.5 0 1 1 3.4 2.3c-.8.4-1 .9-1 1.7"/><path d="M12 17h.01"/></svg>
+	<svg viewBox="0 0 256 256" aria-hidden="true"><path d="M144,180a16,16,0,1,1-16-16A16,16,0,0,1,144,180Zm92-52A108,108,0,1,1,128,20,108.12,108.12,0,0,1,236,128Zm-24,0a84,84,0,1,0-84,84A84.09,84.09,0,0,0,212,128ZM128,64c-24.26,0-44,17.94-44,40v4a12,12,0,0,0,24,0v-4c0-8.82,9-16,20-16s20,7.18,20,16-9,16-20,16a12,12,0,0,0-12,12v8a12,12,0,0,0,23.73,2.56C158.31,137.88,172,122.37,172,104,172,81.94,152.26,64,128,64Z"/></svg>
 	<span><?php echo _( 'Help' ); ?></span>
 </a>
 

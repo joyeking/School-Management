@@ -1,0 +1,7 @@
+# Caddy reverse proxy — automatic HTTPS via Let's Encrypt.
+# SITE_ADDRESS comes from .env (e.g. 203-0-113-7.sslip.io or alpha.example.com).
+
+{$SITE_ADDRESS} {
+	encode zstd gzip
+	reverse_proxy app:80
+}

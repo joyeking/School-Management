@@ -538,9 +538,9 @@ function makeFileAttached( $value, $name )
 		$filesAttachedCount++;
 
 		//FJ colorbox
-		$view_online = '<img src="assets/themes/' . Preferences( 'THEME' ) . '/btn/visualize.png" class="button bigger"> <b>' . _( 'View Online' ) . '</b>';
+		$view_online = '<img src="assets/themes/' . Preferences( 'THEME' ) . '/btn/visualize.svg" class="button bigger"> <b>' . _( 'View Online' ) . '</b>';
 
-		$download = '<img src="assets/themes/' . Preferences( 'THEME' ) . '/btn/download.png" class="button bigger"> <b>' . _( 'Download' ) . '</b>';
+		$download = '<img src="assets/themes/' . Preferences( 'THEME' ) . '/btn/download.svg" class="button bigger"> <b>' . _( 'Download' ) . '</b>';
 
 		if ( filter_var( $value, FILTER_VALIDATE_URL ) !== false ) //embed link
 		{

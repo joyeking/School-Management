@@ -1,0 +1,44 @@
+<?php
+/**
+ * Production config.inc.php — TEMPLATE
+ *
+ * Use this only for a MANUAL deploy (nginx/Apache + PHP-FPM + MariaDB) where
+ * you are not using the Docker stack. The Docker stack generates this file
+ * automatically from deploy/.env — you do not need this file there.
+ *
+ * Copy to the application root as config.inc.php and edit the values.
+ */
+
+// Database type: postgresql or mysql.
+$DatabaseType = 'mysql';
+
+// Database server hostname: use localhost if on same server.
+$DatabaseServer = 'localhost';
+
+// Database port (default 3306 for MySQL/MariaDB).
+$DatabasePort = '3306';
+
+// Database username.
+$DatabaseUsername = 'rosario';
+
+// Database password.
+$DatabasePassword = 'change-this-to-a-long-random-password';
+
+// Database name.
+$DatabaseName = 'rosariosis';
+
+// Full path to wkhtmltopdf binary (empty = HTML reports instead of PDF).
+$wkhtmltopdfPath = '';
+
+// Default school year (Ethiopian school year starts in September).
+$DefaultSyear = '2025';
+
+// Display dates in the Ethiopian calendar (data is stored as Gregorian).
+$EthiopianCalendar = true;
+
+// Email address to receive notifications / errors. Set these in production.
+$RosarioNotifyAddress = 'admin@yourdomain.com';
+$RosarioErrorsAddress = 'admin@yourdomain.com';
+
+// Locales.
+$RosarioLocales = [ 'en_US.utf8' ];

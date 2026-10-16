@@ -482,8 +482,19 @@ if ( empty( $_SESSION['STAFF_ID'] )
 
 ?>
 
-	<img src="assets/themes/<?php echo URLEscape( Config( 'THEME' ) ); ?>/logo.png" class="logo center" alt="Logo" />
-	<h4 class="center"><?php echo ParseMLField( Config( 'TITLE' ) ); ?></h4>
+	<div class="login-layout">
+		<section class="login-brand-panel" aria-labelledby="login-brand-title">
+			<p class="login-brand-eyebrow">EthioSIS</p>
+			<img src="assets/themes/<?php echo URLEscape( Config( 'THEME' ) ); ?>/logo.png" class="logo login-brand-logo" alt="" />
+			<h1 class="login-brand-title" id="login-brand-title"><?php echo ParseMLField( Config( 'TITLE' ) ); ?></h1>
+			<p class="login-brand-copy"><?php echo _( 'Student information and day-to-day school management.' ); ?></p>
+		</section>
+		<section class="login-content" aria-labelledby="login-welcome-title">
+			<div class="login-form-heading">
+				<p class="login-form-eyebrow"><?php echo _( 'Secure access' ); ?></p>
+				<h2 id="login-welcome-title"><?php echo _( 'Welcome back' ); ?></h2>
+				<p><?php echo _( 'Sign in to continue to your school workspace.' ); ?></p>
+			</div>
 	<form name="loginform" id="loginform" method="post">
 	<table class="cellspacing-0 width-100p">
 
@@ -568,6 +579,8 @@ if ( empty( $_SESSION['STAFF_ID'] )
 		<input type="hidden" name="redirect_to" value="<?php echo URLEscape( $_REQUEST['redirect_to'] ); ?>" />
 	<?php endif; ?>
 	</form>
+		</section>
+	</div>
 	<details class="about-rosariosis">
 		<summary><?php echo _( 'About' ); ?></summary>
 		<?php // System disclaimer. ?>

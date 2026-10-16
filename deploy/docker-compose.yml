@@ -1,0 +1,73 @@
+# EthioSIS — one-command production stack
+#
+#   cd school-management/deploy
+#   cp .env.example .env      # then edit .env (set SITE_ADDRESS + passwords)
+#   docker compose up -d --build
+#
+# Brings up: mariadb 11.4 + the app (Apache/PHP 8.4) + Caddy for automatic HTTPS.
+# Caddy fetches a free Let's Encrypt certificate for SITE_ADDRESS automatically.
+
+services:
+  db:
+    image: mariadb:11.4
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: ${DB_NAME:-rosariosis}
+      MARIADB_USER: ${DB_USER:-rosario}
+      MARIADB_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?set DB_ROOT_PASSWORD in .env}
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    # Not published to the host on purpose — only the app can reach the DB.
+
+  app:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_NAME: ${DB_NAME:-rosariosis}
+      DB_USER: ${DB_USER:-rosario}
+      DB_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
+      DEFAULT_SYEAR: ${DEFAULT_SYEAR:-2025}
+      ETHIOPIAN_CALENDAR: ${ETHIOPIAN_CALENDAR:-true}
+      ROSARIO_NOTIFY_ADDRESS: ${ROSARIO_NOTIFY_ADDRESS:-}
+      ROSARIO_ERRORS_ADDRESS: ${ROSARIO_ERRORS_ADDRESS:-}
+    volumes:
+      # Keep user-uploaded content across image rebuilds.
+      - uploads:/var/www/html/assets/FileUploads
+      - photos:/var/www/html/assets/StudentPhotos
+      - user_photos:/var/www/html/assets/UserPhotos
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:?set SITE_ADDRESS in .env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  db_data:
+  uploads:
+  photos:
+  user_photos:
+  caddy_data:
+  caddy_config:

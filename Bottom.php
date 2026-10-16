@@ -27,11 +27,7 @@ if ( empty( $_REQUEST['bottomfunc'] ) ) : ?>
 			<?php echo _( 'Skip to main content' ); // Accessibility link to skip menus. ?>
 		</a>
 		<a id="BottomButtonMenu" href="#!" title="<?php echo AttrEscape( _( 'Menu' ) ); ?>" class="BottomButton">
-			<svg viewBox="0 0 24 24">
-				<line x1="3" y1="12" x2="21" y2="12"></line>
-				<line x1="3" y1="6" x2="21" y2="6"></line>
-				<line x1="3" y1="18" x2="21" y2="18"></line>
-			</svg>
+			<svg viewBox="0 0 256 256" aria-hidden="true"><path d="M228,128a12,12,0,0,1-12,12H40a12,12,0,0,1,0-24H216A12,12,0,0,1,228,128ZM40,76H216a12,12,0,0,0,0-24H40a12,12,0,0,0,0,24ZM216,180H40a12,12,0,0,0,0,24H216a12,12,0,0,0,0-24Z"/></svg>
 			<span><?php echo _( 'Menu' ); ?></span>
 		</a>
 
@@ -80,7 +76,7 @@ if ( empty( $_REQUEST['bottomfunc'] ) ) : ?>
 
 			<a href="<?php echo URLEscape( $back_url ); ?>" title="<?php echo AttrEscape( $back_text ); ?>"
 				id="BottomButtonBack" class="BottomButton<?php echo $back_url ? '' : ' hide'; ?>">
-				<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+				<svg viewBox="0 0 256 256" aria-hidden="true"><path d="M228,128a12,12,0,0,1-12,12H69l51.52,51.51a12,12,0,0,1-17,17l-72-72a12,12,0,0,1,0-17l72-72a12,12,0,0,1,17,17L69,116H216A12,12,0,0,1,228,128Z"/></svg>
 				<span><?php echo $back_text; ?></span>
 			</a>
 
@@ -93,13 +89,36 @@ if ( empty( $_REQUEST['bottomfunc'] ) ) : ?>
 		 */
 		do_action( 'Bottom.php|bottom_buttons' ); ?>
 
-		<a href="<?php echo URLEscape( 'index.php?modfunc=logout&token=' . $_SESSION['token'] ); ?>" target="_top" title="<?php echo AttrEscape( _( 'Logout' ) ); ?>" class="BottomButton">
-			<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
-			<span><?php echo _( 'Logout' ); ?></span>
-		</a>
+		<?php
+		/**
+		 * EthioSIS: light / dark scheme toggle sits where Logout used to be.
+		 *
+		 * The chosen scheme lives in the ethio_scheme cookie, which
+		 * Warehouse.php stamps onto <html data-theme>, so this renders the
+		 * correct icon and label on the very first paint (no JS flash).
+		 * Both glyphs are inline SVG; CSS shows the one for the other
+		 * scheme so the swap costs no request.
+		 *
+		 * @see Warehouse.php  $ethio_scheme
+		 * @see Side.php       Logout, moved to the bottom of the sidebar.
+		 */
+		$ethio_is_dark = isset( $_COOKIE['ethio_scheme'] )
+			&& $_COOKIE['ethio_scheme'] === 'dark';
+
+		$ethio_scheme_label = $ethio_is_dark ? _( 'Light mode' ) : _( 'Dark mode' ); ?>
+
+		<button type="button" id="BottomButtonScheme" class="BottomButton"
+			title="<?php echo AttrEscape( $ethio_scheme_label ); ?>"
+			aria-label="<?php echo AttrEscape( $ethio_scheme_label ); ?>"
+			aria-pressed="<?php echo $ethio_is_dark ? 'true' : 'false'; ?>"
+			data-scheme="<?php echo $ethio_is_dark ? 'dark' : 'light'; ?>">
+			<svg viewBox="0 0 256 256" aria-hidden="true" class="scheme-icon scheme-icon-dark"><path d="M116,36V20a12,12,0,0,1,24,0V36a12,12,0,0,1-24,0Zm80,92a68,68,0,1,1-68-68A68.07,68.07,0,0,1,196,128Zm-24,0a44,44,0,1,0-44,44A44.05,44.05,0,0,0,172,128ZM51.51,68.49a12,12,0,1,0,17-17l-12-12a12,12,0,0,0-17,17Zm0,119-12,12a12,12,0,0,0,17,17l12-12a12,12,0,1,0-17-17ZM196,72a12,12,0,0,0,8.49-3.51l12-12a12,12,0,0,0-17-17l-12,12A12,12,0,0,0,196,72Zm8.49,115.51a12,12,0,0,0-17,17l12,12a12,12,0,0,0,17-17ZM48,128a12,12,0,0,0-12-12H20a12,12,0,0,0,0,24H36A12,12,0,0,0,48,128Zm80,80a12,12,0,0,0-12,12v16a12,12,0,0,0,24,0V220A12,12,0,0,0,128,208Zm108-92H220a12,12,0,0,0,0,24h16a12,12,0,0,0,0-24Z"/></svg>
+			<svg viewBox="0 0 256 256" aria-hidden="true" class="scheme-icon scheme-icon-light"><path d="M236.37,139.4a12,12,0,0,0-12-3A84.07,84.07,0,0,1,119.6,31.59a12,12,0,0,0-15-15A108.86,108.86,0,0,0,49.69,55.07,108,108,0,0,0,136,228a107.09,107.09,0,0,0,64.93-21.69,108.86,108.86,0,0,0,38.44-54.94A12,12,0,0,0,236.37,139.4Zm-49.88,47.74A84,84,0,0,1,68.86,69.51,84.93,84.93,0,0,1,92.27,48.29Q92,52.13,92,56A108.12,108.12,0,0,0,200,164q3.87,0,7.71-.27A84.79,84.79,0,0,1,186.49,187.14Z"/></svg>
+			<span><?php echo $ethio_scheme_label; ?></span>
+		</button>
 		<?php // EthioSIS: Print sits at the far right of the top bar. ?>
 		<a id="BottomButtonPrint" href="" target="_blank" title="<?php echo AttrEscape( _( 'Print' ) ); ?>" class="BottomButton">
-			<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6"/><rect x="4" y="9" width="16" height="8" rx="2"/><path d="M8 17h8v4H8z"/></svg>
+			<svg viewBox="0 0 256 256" aria-hidden="true"><path d="M214.67,68H204V40a12,12,0,0,0-12-12H64A12,12,0,0,0,52,40V68H41.33C25.16,68,12,80.56,12,96v80a12,12,0,0,0,12,12H52v28a12,12,0,0,0,12,12H192a12,12,0,0,0,12-12V188h28a12,12,0,0,0,12-12V96C244,80.56,230.84,68,214.67,68ZM76,52H180V68H76ZM180,204H76V172H180Zm40-40H204v-4a12,12,0,0,0-12-12H64a12,12,0,0,0-12,12v4H36V96c0-2.17,2.44-4,5.33-4H214.67c2.89,0,5.33,1.83,5.33,4Zm-16-44a16,16,0,1,1-16-16A16,16,0,0,1,204,120Z"/></svg>
 			<span><?php echo _( 'Print' ); ?></span>
 		</a>
 		<span class="loading BottomButton"></span>

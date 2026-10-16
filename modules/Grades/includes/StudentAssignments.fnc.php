@@ -806,7 +806,7 @@ function MakeStudentAssignmentSubmissionView( $value, $column )
 		$date = ProperDateTime( $data['date'], 'short' );
 
 		$submission_column_html = '<a class="colorboxinline" href="#submission' . $THIS_RET['ASSIGNMENT_ID'] . '-' . $student_id . '">
-		<img src="assets/themes/' . Preferences( 'THEME' ) . '/btn/visualize.png" class="button bigger" /> ' .
+		<img src="assets/themes/' . Preferences( 'THEME' ) . '/btn/visualize.svg" class="button bigger" /> ' .
 		_( 'View Online' ) . '</a>';
 
 		$file_html = $message_html = '';
