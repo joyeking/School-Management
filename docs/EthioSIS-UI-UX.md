@@ -368,3 +368,73 @@ Info on a settled pass. Light: 379/379, tokens untouched (`--bg #eceef0`, `--bra
 green). Eleven pages swept: no PHP errors, no horizontal overflow, no `max-height` traps, no remaining plates,
 every `img.button` 16/20/14px. Both schemes were measured on clean reloads — toggling the scheme mid-flight
 returns a partly-parsed document, and its computed values are a meaningless mix of both palettes.
+
+## 9. Fourth review round: grayscale dark surfaces, form spacing, sidebar feedback
+
+Scope was agreed in one line: **sidebar text + every page/section/row background + the sidebar active pills go
+gray in dark mode; content links and the green *Save* button keep the hue.** Dark mode is now grayscale-only
+apart from those two affordances and the semantic status colors (`div.updated` / `div.error`).
+
+### 9.1 Green was leaking from three places
+A whole-app audit (every element in `#menu` and `#body`, computed `color` / `background-color` / `border-top-color`
+tested for `g > r` and `g > b`) found green in exactly three families on the School pages:
+
+- **Sidebar text.** `[data-theme="dark"] a { color: var(--brand) }` is (0,1,1) and lands *after* `.wp-submenu a`
+  (0,1,1), so it beat the submenu's gray and every sidebar link measured `rgb(77,191,149)`.
+- **The "New note / New poll" create band.** `table.list:has(.list-add-row [id^="divNoteContent"]) > tbody >
+  tr.list-add-row` filled the row with `--brand-50` and ruled it with `--brand`, and its `::before` kicker was
+  `--brand-700` — the 716×565 green wash.
+- **The School calendar.** Day washes (`--day-full` green, `--day-minutes` amber), calendar event chips
+  (`--brand-100` plate + `--brand-700` text + brand left rule) and the `h3.h3selected` green top rule.
+
+All three are restated in the new **theme.css section 27**, uniformly at `html[data-theme="dark"] <selector>`.
+That prefix adds one attribute *and* one element, so it out-ranks both the bare legacy selectors and the earlier
+same-weight `[data-theme="dark"] …` restatements without relying on concatenation order. `a#selectedModuleLink`
+and `a#selectedMenuLink` are the app's own ids, so the grayscale pill and plate reuse them rather than inventing
+a parallel class that light mode would have to out-specify.
+
+The calendar's three day types stay **distinguishable**, just as three grays (`#4f4f4f` full, `#3d3d3d`
+minutes, `#2f2f2f` no-school) instead of green / amber / gray. Content links (`.md-link`, `.cboxElement`,
+`.ethio-onboarding-link`) and the `input.button-primary` fill keep their green; the onboarding **kicker** above
+those links is a label, not a link, and now takes `--text-faint`.
+
+### 9.2 Form spacing on every page
+Two geometry defects, both visible on Portal Notes and present wherever a file input or a date trio appears:
+
+- **The file input overlapped its label.** `.rt2colorBox > div > label { margin: -4px 0 … }` pulled the "File
+  Attached" label up under the control — measured input bottom 891 vs label top 887, a 4px overlap. The `-4px`
+  is now `0`, and `input[type="file"] { display: inline-block; vertical-align: top; margin-bottom: 6px }`
+  guarantees the gap on any page. Measured gap after: **6px**.
+- **The month / day / year selects butted together.** `PrepareDate()` emits `</select><label class="a11y-hidden">
+  <select>` with no whitespace, so the three selects sat at gap 0. `#body .nobr > * + * { margin-left: 6px }`
+  restores the gap; the interleaved labels are `position: absolute`, so they take the margin without adding a
+  phantom gap. Measured gaps after: **6 / 6 / 6** (select → select → select → calendar button).
+
+### 9.3 Sidebar: immediate active state and scroll-to-reveal
+Both are in `theme.js`, not CSS.
+
+- **Instant active.** The app marks the current module with `#selectedModuleLink` only on page load, and we
+  swallow the module row's click (it just opens the submenu), so the highlight used to lag by a full reload.
+  `markModuleSelected()` now *moves that id* onto the clicked row — identical styling, no new CSS, and
+  `syncAccordion()` reads the same id so the open state stays in agreement. `#selectedMenuLink` moves the same
+  way when a submenu link is clicked, before its navigation.
+- **Scroll-to-reveal.** `#menu > .adminmenu` is one scroll port. `revealModule()` nudges `scrollTop` only when
+  the row or the first submenu item would land outside the port, and only on a click that opens a module —
+  never on load. Measured: scrolled to the bottom then clicking *Students* moved `scrollTop` 405 → 58 and left
+  the row and its first item inside the port; clicking *Attendance* from the bottom left its first item visible
+  at 218–254 against a port of 156–618.
+
+### 9.4 Verification
+Dark mode, computed-style audit of `#menu` and `#body` on 17 module pages (all of School Setup plus the
+dashboard, Student/User Fields, Enrollment Codes and Courses): **0 green in the sidebar, 0 green backgrounds**
+anywhere. The selected module pill measures `#b0b0b0` / `#2b2b2b` and the selected submenu item `#484848` /
+`#f4f4f5` — grayscale, same prominence as the green they replace. The only green left is content links, the
+primary button, the `div.updated` success banner (a gray plate with green status text) and the red logout glyph.
+
+One measurement trap to remember: the app adds `#selectedModuleLink` **after** first paint, and `a.menu-top`
+transitions its background and colour. In a throttled/occluded tab those transitions freeze at `currentTime 0`,
+so the pill reads as the pre-id value (`transparent`) even though the rule is correct. Settle the page first
+(`document.getAnimations().forEach(a => a.finish())`) before trusting any computed style here.
+
+Light mode re-checked on a clean reload: tokens untouched, the sidebar's green active submenu and light file
+input are unchanged (the geometry fixes land in both schemes because they are corrections, not theming).

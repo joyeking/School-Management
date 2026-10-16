@@ -237,6 +237,47 @@
 		} );
 	}
 
+	// The app marks the current module with #selectedModuleLink on page load.
+	// Because we swallow the module row's click (the row only opens its
+	// submenu), that highlight used to lag behind by a full page load. Move the
+	// id onto the clicked row so the pill lights up immediately. Re-using the
+	// app's own id keeps the styling identical — no new CSS, no specificity
+	// fight — and syncAccordion() reads this same id, so it agrees with the
+	// open state we set.
+	function markModuleSelected( top ) {
+		var current = document.querySelector( '.adminmenu a#selectedModuleLink' );
+
+		if ( current && current !== top ) {
+			current.removeAttribute( 'id' );
+		}
+
+		if ( top.id !== 'selectedModuleLink' ) {
+			top.id = 'selectedModuleLink';
+		}
+	}
+
+	// The sidebar scrolls as one port. A module low in the list would open its
+	// submenu partly (or wholly) below the fold, so nudge the port just enough
+	// to bring the row — and the first item of its submenu — into view.
+	function revealModule( module ) {
+		var port = module.closest ? module.closest( '.adminmenu' ) : null;
+
+		if ( ! port || port.scrollHeight <= port.clientHeight ) { return; }
+
+		var row = module.querySelector( ':scope > a.menu-top' ) || module;
+		var first = module.querySelector( '.wp-submenu a' ) || row;
+
+		var portRect = port.getBoundingClientRect();
+		var rowRect = row.getBoundingClientRect();
+		var firstRect = first.getBoundingClientRect();
+
+		if ( rowRect.top < portRect.top + 4 ) {
+			port.scrollTop += rowRect.top - ( portRect.top + 6 );
+		} else if ( firstRect.bottom > portRect.bottom - 2 ) {
+			port.scrollTop += firstRect.bottom - ( portRect.bottom - 6 );
+		}
+	}
+
 	// Capture phase: this runs BEFORE the app's own `a` click handler, so a
 	// module row opens its submenu instead of navigating (submenu links do).
 	document.addEventListener( 'click', function ( e ) {
@@ -245,6 +286,23 @@
 		if ( ! target || ! target.closest ) { return; }
 
 		var top = target.closest( '.adminmenu > .menu-module > a.menu-top' );
+		var sub = top ? null : target.closest( '.adminmenu .wp-submenu a' );
+
+		// A submenu link navigates (we let it). Light it up now rather than
+		// waiting for the reloaded page to mark it.
+		if ( sub ) {
+			var prev = document.querySelector( '.adminmenu a#selectedMenuLink' );
+
+			if ( prev && prev !== sub ) {
+				prev.removeAttribute( 'id' );
+			}
+
+			if ( sub.id !== 'selectedMenuLink' ) {
+				sub.id = 'selectedMenuLink';
+			}
+
+			return;
+		}
 
 		if ( ! top ) { return; }
 
@@ -258,6 +316,11 @@
 		sidebarModules().forEach( function ( m ) { setModuleOpen( m, false ); } );
 
 		setModuleOpen( module, willOpen );
+
+		if ( willOpen ) {
+			markModuleSelected( top );
+			revealModule( module );
+		}
 	}, true );
 
 	// ------------------------------------------------------------------
