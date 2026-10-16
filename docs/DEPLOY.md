@@ -153,7 +153,19 @@ https://203-0-113-7.sslip.io/InstallDatabase.php
 Check the app with `https://203-0-113-7.sslip.io/diagnostic.php` (as admin) — it should
 report *"Your RosarioSIS installation is properly configured."*
 
-### 5. Backups
+### 5. Optional: load demo data
+
+To give testers something to explore (Grade 9 courses + six students + schedules):
+
+```bash
+cd ~/ethiosis/deploy
+docker compose exec -T db mariadb -uroot -p"$DB_ROOT_PASSWORD" rosariosis < sample-data.sql
+```
+
+Demo student logins are `abebe`, `tigist`, `dawit`, `hanna`, `yonas`, `selam` — all with
+the password `student`.
+
+### 6. Backups
 
 ```bash
 cd ~/ethiosis/deploy
@@ -165,7 +177,7 @@ crontab -e
 Backups land in `deploy/backups/` (last 14 kept). Copy them off the server
 (e.g. `scp`) now and then — a backup on the same disk is not a real backup.
 
-### 6. Updating the app later
+### 7. Updating the app later
 
 ```bash
 cd ~/ethiosis
